@@ -12,6 +12,8 @@ namespace ET.Server
 
             scene.AddComponent<MailBoxComponent, MailboxType>(MailboxType.UnOrderMessageDispatcher);
 
+            scene.AddComponent<DBManagerComponent>();
+            
             switch (scene.SceneType)
             {
                 case SceneType.Router:
@@ -47,6 +49,13 @@ namespace ET.Server
                     break;
                 case SceneType.BenchmarkClient:
                     scene.AddComponent<BenchmarkClientComponent>();
+                    break;
+                case SceneType.Game:
+                    break;
+                case SceneType.Account:
+                    break;
+                case SceneType.Login:
+                    scene.AddComponent<NetServerComponent, IPEndPoint>(startSceneConfig.InnerIPOutPort);
                     break;
             }
 

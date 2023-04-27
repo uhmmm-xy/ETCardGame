@@ -16,6 +16,9 @@
 		BenchmarkClient = 10,
 		BenchmarkServer = 11,
 		Benchmark = 12,
+		Login = 13,
+		Account = 14,
+		Game = 15,
 
 		// 客户端Model层
 		Client = 31,

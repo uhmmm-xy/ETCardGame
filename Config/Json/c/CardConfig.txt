@@ -1,0 +1,13 @@
+{"list":[
+{"_t":"CardConfig","_id":1,"MinValue":0,"MaxValue":9,"Name":"筒","ValueName":["一","二","三","四","五","六","七","八","九"],"Count":4},
+{"_t":"CardConfig","_id":2,"MinValue":0,"MaxValue":9,"Name":"条","ValueName":["一","二","三","四","五","六","七","八","九"],"Count":4},
+{"_t":"CardConfig","_id":3,"MinValue":0,"MaxValue":9,"Name":"万","ValueName":["一","二","三","四","五","六","七","八","九"],"Count":4},
+{"_t":"CardConfig","_id":4,"MinValue":0,"MaxValue":3,"Name":"箭","ValueName":["中","发","白"],"Count":4},
+{"_t":"CardConfig","_id":5,"MinValue":0,"MaxValue":4,"Name":"风","ValueName":["东","南","西","北"],"Count":4},
+{"_t":"CardConfig","_id":6,"MinValue":0,"MaxValue":8,"Name":"花","ValueName":["竹","梅","兰","菊","春","夏","秋","冬"],"Count":1},
+{"_t":"CardConfig","_id":7,"MinValue":0,"MaxValue":13,"Name":"黑桃","ValueName":["A","2","3","4","5","6","7","8","9","10","J","Q","K"],"Count":1},
+{"_t":"CardConfig","_id":8,"MinValue":0,"MaxValue":13,"Name":"红桃","ValueName":["A","2","3","4","5","6","7","8","9","10","J","Q","K"],"Count":1},
+{"_t":"CardConfig","_id":9,"MinValue":0,"MaxValue":13,"Name":"梅花","ValueName":["A","2","3","4","5","6","7","8","9","10","J","Q","K"],"Count":1},
+{"_t":"CardConfig","_id":10,"MinValue":0,"MaxValue":13,"Name":"方片","ValueName":["A","2","3","4","5","6","7","8","9","10","J","Q","K"],"Count":1},
+{"_t":"CardConfig","_id":11,"MinValue":0,"MaxValue":2,"Name":"鬼牌","ValueName":["Big","Small"],"Count":1},
+]}
