@@ -3,7 +3,6 @@ using ProtoBuf;
 using System.Collections.Generic;
 namespace ET
 {
-// using
 	[ResponseType(nameof(ObjectQueryResponse))]
 	[Message(InnerMessage.ObjectQueryRequest)]
 	[ProtoContract]

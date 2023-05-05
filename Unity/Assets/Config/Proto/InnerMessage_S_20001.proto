@@ -178,13 +178,3 @@ message M2M_UnitTransferResponse // IActorResponse
   int32 Error = 2; 
   string Message = 3; 
 }
-
-message ObjectGetResponse // IActorResponse
-{
-  int32 RpcId = 1; 
-  int32 Error = 2; 
-  string Message = 3; 
-  int32 Type = 4; 
-  int64 InstanceId = 5; 
-}
-

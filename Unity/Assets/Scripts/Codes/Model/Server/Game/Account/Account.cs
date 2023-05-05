@@ -1,10 +1,14 @@
 ﻿namespace ET
 {
+    [ChildOf]
     public class Account : Entity,IAwake<string>,IDestroy
     {
-        public string OpenId;
-        public string CreateTime;
+        public int PlayerId;
+        public long CreatedTime;
         public int AccountType;
+        public long LastLoginTime;
+        public int LoginType;
+        public int ChannelId;
     }
 
     public enum LoginType

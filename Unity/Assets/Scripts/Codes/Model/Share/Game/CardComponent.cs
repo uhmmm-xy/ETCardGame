@@ -2,7 +2,7 @@
 
 namespace ET
 {
-    [ComponentOf()]
+    [ComponentOf]
     public class CardComponent : Entity,IAwake,IAwake<int[]>,IDestroy
     {
         public List<Card> Cards =new ();

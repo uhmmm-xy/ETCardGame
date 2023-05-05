@@ -13,5 +13,10 @@ namespace ET
         // 这里配置逻辑层的错误码
         // 110000 - 200000是抛异常的错误
         // 200001以上不抛异常
+
+        public const int ERR_AccountIsNull = 110001;   //账号为空
+        public const int ERR_AccountNotLogin = 110002;  //账号未登录
+        public const int ERR_AccountDisconnect = 110003;  //账号断线
+        public const int ERR_AccountMuchOpt = 110004;   //账号为空
     }
 }

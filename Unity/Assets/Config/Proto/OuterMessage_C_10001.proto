@@ -253,3 +253,21 @@ message G2C_Benchmark // IResponse
 	int32 Error = 2;
 	string Message = 3;
 }
+
+//房卡麻将消息开始
+
+//ResponseType A2C_LoginAccount
+message C2A_LoginAccount // IRequest
+{
+	int32 RpcId = 1;
+	string Token = 2;
+}
+
+message A2C_LoginAccount // IResponse
+{
+	int32 RpcId = 1;
+	int32 Error = 2;
+	string Message = 3;
+	string GateIPAddress = 4;
+	string Token = 5;
+}
