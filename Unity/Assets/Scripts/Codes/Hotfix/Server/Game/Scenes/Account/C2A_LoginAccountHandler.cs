@@ -2,7 +2,7 @@
 
 namespace ET
 {
-    [MessageHandler(SceneType.Account)]
+    [MessageHandler(SceneType.Login)]
     public class C2A_LoginAccountHandler : AMRpcHandler<C2A_LoginAccount,A2C_LoginAccount>
     {
         protected override async ETTask Run(Session session, C2A_LoginAccount request, A2C_LoginAccount response)
@@ -37,7 +37,7 @@ namespace ET
                 using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.LoginAccount, request.Token.Trim().GetHashCode()))
                 {
                     Account account = session.AddChild<Account, string>(request.Token);
-                    //account = await account.Save();
+                    account = await account.Save();
                     if (!account.IsPlayer())
                     {
                         response.Error = ErrorCode.ERR_AccountNotLogin;
@@ -45,7 +45,7 @@ namespace ET
                         return;
                     }
 
-                    StartSceneConfig startSceneConfig = StartSceneConfigCategory.Instance.GetBySceneName(session.DomainZone(), "LoginCenter");
+                    StartSceneConfig startSceneConfig = StartSceneConfigCategory.Instance.GetBySceneName(session.DomainZone(), "Account");
                     long loginCenterid = startSceneConfig.InstanceId;
                     L2A_LoginAccountResponse l2ALoginAccountResponse = 
                             await ActorMessageSenderComponent.Instance.Call(loginCenterid, new A2L_LoginAccountRequest() { AccountId = account.Id })

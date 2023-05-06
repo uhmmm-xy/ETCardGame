@@ -22,8 +22,8 @@
 
     public enum AccountType
     {
-        BlackList,
-        Node,
-        Admin
+        BlackList = 0,
+        Node = 1,
+        Admin = 1 << 1
     }
 }
