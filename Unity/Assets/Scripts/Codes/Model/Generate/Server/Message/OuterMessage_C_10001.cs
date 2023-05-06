@@ -522,10 +522,10 @@ namespace ET
 	}
 
 //房卡麻将消息开始
-	[ResponseType(nameof(A2C_LoginAccount))]
-	[Message(OuterMessage.C2A_LoginAccount)]
+	[ResponseType(nameof(L2C_LoginAccount))]
+	[Message(OuterMessage.C2L_LoginAccount)]
 	[ProtoContract]
-	public partial class C2A_LoginAccount: ProtoObject, IRequest
+	public partial class C2L_LoginAccount: ProtoObject, IRequest
 	{
 		[ProtoMember(1)]
 		public int RpcId { get; set; }
@@ -535,9 +535,9 @@ namespace ET
 
 	}
 
-	[Message(OuterMessage.A2C_LoginAccount)]
+	[Message(OuterMessage.L2C_LoginAccount)]
 	[ProtoContract]
-	public partial class A2C_LoginAccount: ProtoObject, IResponse
+	public partial class L2C_LoginAccount: ProtoObject, IResponse
 	{
 		[ProtoMember(1)]
 		public int RpcId { get; set; }
@@ -594,7 +594,7 @@ namespace ET
 		 public const ushort M2C_TransferMap = 10035;
 		 public const ushort C2G_Benchmark = 10036;
 		 public const ushort G2C_Benchmark = 10037;
-		 public const ushort C2A_LoginAccount = 10038;
-		 public const ushort A2C_LoginAccount = 10039;
+		 public const ushort C2L_LoginAccount = 10038;
+		 public const ushort L2C_LoginAccount = 10039;
 	}
 }

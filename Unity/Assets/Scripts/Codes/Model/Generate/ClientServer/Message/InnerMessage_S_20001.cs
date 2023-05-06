@@ -377,6 +377,72 @@ namespace ET
 
 	}
 
+//房卡麻将消息开始
+	[ResponseType(nameof(A2L_LoginAccount))]
+	[Message(InnerMessage.L2A_LoginAccount)]
+	[ProtoContract]
+	public partial class L2A_LoginAccount: ProtoObject, IActorRequest
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int PlayerId { get; set; }
+
+	}
+
+	[Message(InnerMessage.A2L_LoginAccount)]
+	[ProtoContract]
+	public partial class A2L_LoginAccount: ProtoObject, IActorResponse
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int Error { get; set; }
+
+		[ProtoMember(3)]
+		public string Message { get; set; }
+
+		[ProtoMember(4)]
+		public string Token { get; set; }
+
+		[ProtoMember(5)]
+		public string Gate { get; set; }
+
+	}
+
+	[ResponseType(nameof(G2A_LoginGate))]
+	[Message(InnerMessage.A2G_LoginGate)]
+	[ProtoContract]
+	public partial class A2G_LoginGate: ProtoObject, IActorRequest
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int PlayerId { get; set; }
+
+	}
+
+	[Message(InnerMessage.G2A_LoginGate)]
+	[ProtoContract]
+	public partial class G2A_LoginGate: ProtoObject, IActorResponse
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int Error { get; set; }
+
+		[ProtoMember(3)]
+		public string Message { get; set; }
+
+		[ProtoMember(4)]
+		public string Token { get; set; }
+
+	}
+
 	public static class InnerMessage
 	{
 		 public const ushort ObjectQueryRequest = 20002;
@@ -402,5 +468,9 @@ namespace ET
 		 public const ushort ObjectQueryResponse = 20022;
 		 public const ushort M2M_UnitTransferRequest = 20023;
 		 public const ushort M2M_UnitTransferResponse = 20024;
+		 public const ushort L2A_LoginAccount = 20025;
+		 public const ushort A2L_LoginAccount = 20026;
+		 public const ushort A2G_LoginGate = 20027;
+		 public const ushort G2A_LoginGate = 20028;
 	}
 }

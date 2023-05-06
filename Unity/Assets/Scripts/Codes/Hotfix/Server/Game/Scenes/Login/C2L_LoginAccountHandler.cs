@@ -3,9 +3,9 @@
 namespace ET
 {
     [MessageHandler(SceneType.Login)]
-    public class C2A_LoginAccountHandler : AMRpcHandler<C2A_LoginAccount,A2C_LoginAccount>
+    public class C2L_LoginAccountHandler : AMRpcHandler<C2L_LoginAccount,L2C_LoginAccount>
     {
-        protected override async ETTask Run(Session session, C2A_LoginAccount request, A2C_LoginAccount response)
+        protected override async ETTask Run(Session session, C2L_LoginAccount request, L2C_LoginAccount response)
         {
             await ETTask.CompletedTask;
             if (session.DomainScene().SceneType != SceneType.Account)
@@ -47,32 +47,25 @@ namespace ET
 
                     StartSceneConfig startSceneConfig = StartSceneConfigCategory.Instance.GetBySceneName(session.DomainZone(), "Account");
                     long loginCenterid = startSceneConfig.InstanceId;
-                    L2A_LoginAccountResponse l2ALoginAccountResponse = 
-                            await ActorMessageSenderComponent.Instance.Call(loginCenterid, new A2L_LoginAccountRequest() { AccountId = account.Id })
-                                    as L2A_LoginAccountResponse;
-                    long accountSessionid = session.DomainScene().GetComponent<AccountSessionsComponent>().Get(account.Id);
-
-                    if (l2ALoginAccountResponse.Error != ErrorCode.ERR_Success)
+                    A2L_LoginAccount resp = 
+                            await ActorMessageSenderComponent.Instance.Call(loginCenterid, new L2A_LoginAccount() { PlayerId = account.GetPlayerId() })
+                                    as A2L_LoginAccount;
+                    
+                    if (resp.Error != ErrorCode.ERR_Success)
                     {
-                        response.Error = l2ALoginAccountResponse.Error;
+                        response.Error = resp.Error;
                         session?.Disconnect();
                         account?.Dispose();
                         return;
                     }
+                    
+                    //session.AddComponent<AccountCheckOutTimeComponent, long>(account.Id);
 
-                    if (accountSessionid != 0)
-                    {
-                        MessageHelper.SendActor(accountSessionid, new A2C_Disconnect() { Error = 0 });
-                    }
+                    //string token = TimeHelper.ServerNow().ToString() + RandomGenerator.RandomNumber(int.MinValue, int.MaxValue);
 
-                    session.DomainScene().GetComponent<AccountSessionsComponent>().Add(account.Id, session.InstanceId);
-                    session.AddComponent<AccountCheckOutTimeComponent, long>(account.Id);
-
-                    string token = TimeHelper.ServerNow().ToString() + RandomGenerator.RandomNumber(int.MinValue, int.MaxValue);
-
-                    session.DomainScene().GetComponent<TokenComponent>().Add(account.Id, token);
-                    response.Token = token;
-                    response.AccountId = account.Id;
+                    //session.DomainScene().GetComponent<TokenComponent>().Add(account.Id, token);
+                    response.Token = resp.Token;
+                    response.GateIPAddress = resp.Gate;
                     account?.Dispose();
                 }
             }

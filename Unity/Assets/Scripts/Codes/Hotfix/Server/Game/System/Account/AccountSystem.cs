@@ -41,5 +41,10 @@ namespace ET
 
             return self;
         }
+
+        public static int GetPlayerId(this Account self)
+        {
+            return self.PlayerId;
+        }
     }
 }
