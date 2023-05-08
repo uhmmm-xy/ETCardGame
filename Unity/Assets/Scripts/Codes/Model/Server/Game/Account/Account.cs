@@ -1,7 +1,7 @@
 ﻿namespace ET
 {
     [ChildOf]
-    public class Account : Entity,IAwake<string>,IDestroy
+    public class Account: Entity, IAwake<string>, IDestroy
     {
         public int PlayerId;
         public long CreatedTime;
@@ -24,6 +24,7 @@
     {
         BlackList = 0,
         Node = 1,
-        Admin = 1 << 1
+        Admin = 1 << 1,
+        AI = 1 << 2
     }
 }
