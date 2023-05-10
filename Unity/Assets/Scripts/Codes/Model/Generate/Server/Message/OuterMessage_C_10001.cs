@@ -556,6 +556,73 @@ namespace ET
 
 	}
 
+	[Message(OuterMessage.A2C_Disconnent)]
+	[ProtoContract]
+	public partial class A2C_Disconnent: ProtoObject, IActorMessage
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+	}
+
+	[Message(OuterMessage.UserInfo)]
+	[ProtoContract]
+	public partial class UserInfo: ProtoObject
+	{
+		[ProtoMember(1)]
+		public int PlayerId { get; set; }
+
+		[ProtoMember(2)]
+		public int Jewel { get; set; }
+
+		[ProtoMember(3)]
+		public int Glod { get; set; }
+
+		[ProtoMember(4)]
+		public int Gender { get; set; }
+
+		[ProtoMember(5)]
+		public string HeaderImg { get; set; }
+
+		[ProtoMember(6)]
+		public int Status { get; set; }
+
+		[ProtoMember(7)]
+		public int RoomNumber { get; set; }
+
+	}
+
+	[ResponseType(nameof(G2C_AuthToken))]
+	[Message(OuterMessage.C2G_AuthToken)]
+	[ProtoContract]
+	public partial class C2G_AuthToken: ProtoObject, IRequest
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public string Token { get; set; }
+
+	}
+
+	[Message(OuterMessage.G2C_AuthToken)]
+	[ProtoContract]
+	public partial class G2C_AuthToken: ProtoObject, IResponse
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int Error { get; set; }
+
+		[ProtoMember(3)]
+		public string Message { get; set; }
+
+		[ProtoMember(4)]
+		public UserInfo Info { get; set; }
+
+	}
+
 	public static class OuterMessage
 	{
 		 public const ushort HttpGetRouterResponse = 10002;
@@ -596,5 +663,9 @@ namespace ET
 		 public const ushort G2C_Benchmark = 10037;
 		 public const ushort C2L_LoginAccount = 10038;
 		 public const ushort L2C_LoginAccount = 10039;
+		 public const ushort A2C_Disconnent = 10040;
+		 public const ushort UserInfo = 10041;
+		 public const ushort C2G_AuthToken = 10042;
+		 public const ushort G2C_AuthToken = 10043;
 	}
 }

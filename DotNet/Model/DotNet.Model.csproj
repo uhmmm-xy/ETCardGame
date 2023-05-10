@@ -47,5 +47,10 @@
         <ProjectReference Include="..\Core\DotNet.Core.csproj" />
         <ProjectReference Include="..\Loader\DotNet.Loader.csproj" />
         <ProjectReference Include="..\ThirdParty\DotNet.ThirdParty.csproj" />
+    </ItemGroup> 
+    <ItemGroup>
+      <Folder Include="..\..\Unity\Assets\Scripts\Codes\Model\Server\Game\Gate">
+        <Link>Server\Game\Gate</Link>
+      </Folder>
     </ItemGroup>
 </Project>

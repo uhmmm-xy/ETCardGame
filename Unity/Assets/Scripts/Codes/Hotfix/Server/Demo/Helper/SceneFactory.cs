@@ -32,6 +32,7 @@ namespace ET.Server
                     scene.AddComponent<NetServerComponent, IPEndPoint>(startSceneConfig.InnerIPOutPort);
                     scene.AddComponent<PlayerComponent>();
                     scene.AddComponent<GateSessionKeyComponent>();
+                    scene.AddComponent<TokenComponent>();
                     break;
                 case SceneType.Map:
                     scene.AddComponent<UnitComponent>();
@@ -53,6 +54,7 @@ namespace ET.Server
                 case SceneType.Game:
                     break;
                 case SceneType.Account:
+                    scene.AddComponent<AccountSessionComponent>();
                     break;
                 case SceneType.Login:
                     scene.AddComponent<NetServerComponent, IPEndPoint>(startSceneConfig.InnerIPOutPort);

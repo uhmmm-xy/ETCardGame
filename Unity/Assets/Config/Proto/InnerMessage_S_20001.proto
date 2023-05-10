@@ -212,3 +212,10 @@ message G2A_LoginGate // IActorResponse
     string Message = 3;
     string Token = 4;
 }
+
+message G2A_GateSession // IActorRequest
+{
+    int32 RpcId = 1;
+    int64 SessionId = 2;
+    int32 PlayerId = 3;
+}

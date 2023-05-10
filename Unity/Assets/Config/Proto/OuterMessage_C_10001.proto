@@ -271,3 +271,35 @@ message L2C_LoginAccount // IResponse
 	string GateIPAddress = 4;
 	string Token = 5;
 }
+
+message A2C_Disconnent // IActorMessage
+{
+	int32 RpcId = 1;
+}
+
+message UserInfo
+{
+	int32 PlayerId = 1;
+    int32 Jewel = 2;
+    int32 Glod = 3;
+    int32 Gender = 4;
+    string HeaderImg = 5;
+    int32 Status = 6;
+    int32 RoomNumber = 7;
+}
+
+//ResponseType G2C_AuthToken
+message C2G_AuthToken // IRequest
+{
+	int32 RpcId = 1;
+	string Token = 2;
+}
+
+message G2C_AuthToken // IResponse
+{
+	int32 RpcId = 1;
+	int32 Error = 2;
+	string Message = 3;
+	UserInfo Info = 4;
+}
+

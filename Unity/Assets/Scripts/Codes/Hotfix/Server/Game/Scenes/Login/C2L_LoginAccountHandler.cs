@@ -3,7 +3,7 @@
 namespace ET
 {
     [MessageHandler(SceneType.Login)]
-    public class C2L_LoginAccountHandler : AMRpcHandler<C2L_LoginAccount,L2C_LoginAccount>
+    public class C2L_LoginAccountHandler: AMRpcHandler<C2L_LoginAccount, L2C_LoginAccount>
     {
         protected override async ETTask Run(Session session, C2L_LoginAccount request, L2C_LoginAccount response)
         {
@@ -14,7 +14,7 @@ namespace ET
                 session?.Disconnect();
                 return;
             }
-            
+
             session.RemoveComponent<SessionAcceptTimeoutComponent>();
 
             if (string.IsNullOrEmpty(request.Token))
@@ -23,14 +23,14 @@ namespace ET
                 session?.Disconnect().Coroutine();
                 return;
             }
-            
+
             if (session.GetComponent<SessionLockingComponent>() != null)
             {
                 response.Error = ErrorCode.ERR_AccountMuchOpt;
                 session?.Disconnect().Coroutine();
                 return;
             }
-            
+
             //账号登陆
             using (session.AddComponent<SessionLockingComponent>())
             {
@@ -47,10 +47,11 @@ namespace ET
 
                     StartSceneConfig startSceneConfig = StartSceneConfigCategory.Instance.GetBySceneName(session.DomainZone(), "Account");
                     long loginCenterid = startSceneConfig.InstanceId;
-                    A2L_LoginAccount resp = 
-                            await ActorMessageSenderComponent.Instance.Call(loginCenterid, new L2A_LoginAccount() { PlayerId = account.GetPlayerId() })
+                    A2L_LoginAccount resp =
+                            await ActorMessageSenderComponent.Instance.Call(loginCenterid,
+                                        new L2A_LoginAccount() { PlayerId = account.GetPlayerId() })
                                     as A2L_LoginAccount;
-                    
+
                     if (resp.Error != ErrorCode.ERR_Success)
                     {
                         response.Error = resp.Error;
@@ -58,7 +59,7 @@ namespace ET
                         account?.Dispose();
                         return;
                     }
-                    
+
                     //session.AddComponent<AccountCheckOutTimeComponent, long>(account.Id);
 
                     //string token = TimeHelper.ServerNow().ToString() + RandomGenerator.RandomNumber(int.MinValue, int.MaxValue);
@@ -69,8 +70,6 @@ namespace ET
                     account?.Dispose();
                 }
             }
-
-            
         }
     }
 }

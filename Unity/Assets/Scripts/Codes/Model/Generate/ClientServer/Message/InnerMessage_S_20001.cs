@@ -443,6 +443,21 @@ namespace ET
 
 	}
 
+	[Message(InnerMessage.G2A_GateSession)]
+	[ProtoContract]
+	public partial class G2A_GateSession: ProtoObject, IActorRequest
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public long SessionId { get; set; }
+
+		[ProtoMember(3)]
+		public int PlayerId { get; set; }
+
+	}
+
 	public static class InnerMessage
 	{
 		 public const ushort ObjectQueryRequest = 20002;
@@ -472,5 +487,6 @@ namespace ET
 		 public const ushort A2L_LoginAccount = 20026;
 		 public const ushort A2G_LoginGate = 20027;
 		 public const ushort G2A_LoginGate = 20028;
+		 public const ushort G2A_GateSession = 20029;
 	}
 }
