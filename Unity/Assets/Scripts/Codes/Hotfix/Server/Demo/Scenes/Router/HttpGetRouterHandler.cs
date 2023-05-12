@@ -13,6 +13,7 @@ namespace ET.Server
             HttpGetRouterResponse response = new HttpGetRouterResponse();
             response.Realms = new List<string>();
             response.Routers = new List<string>();
+            response.Logins = new List<string>();
             foreach (StartSceneConfig startSceneConfig in StartSceneConfigCategory.Instance.Realms)
             {
                 response.Realms.Add(startSceneConfig.InnerIPOutPort.ToString());
@@ -20,6 +21,10 @@ namespace ET.Server
             foreach (StartSceneConfig startSceneConfig in StartSceneConfigCategory.Instance.Routers)
             {
                 response.Routers.Add($"{startSceneConfig.StartProcessConfig.OuterIP}:{startSceneConfig.OuterPort}");
+            }
+            foreach (StartSceneConfig startSceneConfig in StartSceneConfigCategory.Instance.Logins)
+            {
+                response.Logins.Add(startSceneConfig.InnerIPOutPort.ToString());
             }
             HttpHelper.Response(context, response);
             await ETTask.CompletedTask;

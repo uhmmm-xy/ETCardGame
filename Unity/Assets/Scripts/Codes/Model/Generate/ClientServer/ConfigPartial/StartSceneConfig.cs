@@ -19,6 +19,8 @@ namespace ET
         public List<StartSceneConfig> Routers = new List<StartSceneConfig>();
         
         public List<StartSceneConfig> Robots = new List<StartSceneConfig>();
+        
+        public List<StartSceneConfig> Logins = new List<StartSceneConfig>();
 
         public StartSceneConfig BenchmarkServer;
         
@@ -48,6 +50,9 @@ namespace ET
                 {
                     case SceneType.Realm:
                         this.Realms.Add(startSceneConfig);
+                        break;
+                    case SceneType.Login:
+                        this.Logins.Add(startSceneConfig);
                         break;
                     case SceneType.Gate:
                         this.Gates.Add(startSceneConfig.Zone, startSceneConfig);

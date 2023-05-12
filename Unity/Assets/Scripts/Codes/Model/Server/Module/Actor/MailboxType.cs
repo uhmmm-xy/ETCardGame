@@ -5,5 +5,7 @@
         MessageDispatcher,
         UnOrderMessageDispatcher,
         GateSession,
+        Account,
+        Game,
     }
 }

@@ -213,7 +213,7 @@ message G2A_LoginGate // IActorResponse
     string Token = 4;
 }
 
-message G2A_GateSession // IActorRequest
+message G2A_GateSession // IActorMessage
 {
     int32 RpcId = 1;
     int64 SessionId = 2;

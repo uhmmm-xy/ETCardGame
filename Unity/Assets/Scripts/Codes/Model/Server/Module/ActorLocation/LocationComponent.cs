@@ -9,6 +9,8 @@ namespace ET.Server
         public const int Player = 1;
         public const int Friend = 2;
         public const int Chat = 3;
+        public const int Account = 4;
+        public const int Game = 5;
         public const int Max = 100;
     }
     

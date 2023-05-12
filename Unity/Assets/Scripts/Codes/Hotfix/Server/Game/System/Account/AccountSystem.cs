@@ -10,12 +10,21 @@ namespace ET
         {
             protected override void Awake(Account self, string a)
             {
-                self.AccountType = (int)AccountType.Node;
-                self.ChannelId = 1;
-                self.LoginType = (int)LoginType.Test;
                 self.PlayerId = int.Parse(a);
-                
             }
+        }
+        
+        public class AccountAwakeIdSystem : AwakeSystem<Account, int>
+        {
+            protected override void Awake(Account self, int playerId)
+            {
+                self.PlayerId = playerId;
+            }
+        }
+
+        public static async ETTask Init(this Account self)
+        {
+            await self.AddComponent<User>().Init();
         }
 
         public static bool IsPlayer(this Account self)
@@ -25,18 +34,18 @@ namespace ET
         
         public static async ETTask<Account> Save(this Account self)
         {
-            var list = await DBManagerComponent.Instance.GetZoneDB(self.Parent.DomainZone()).Query<Account>(d => d.PlayerId.Equals(self.PlayerId));
+            var list = await DBManagerComponent.Instance.GetZoneDB(1).Query<Account>(d => d.PlayerId.Equals(self.PlayerId));
             if (list != null & list.Count > 0)
             {
                 self = list.First();
                 self.LastLoginTime = TimeHelper.ServerNow();
-                await DBManagerComponent.Instance.GetZoneDB(self.Parent.DomainZone()).Save(self);
+                await DBManagerComponent.Instance.GetZoneDB(1).Save(self);
             }
             else
             {
                 self.CreatedTime = TimeHelper.ServerNow();
                 self.AccountType = (int)AccountType.Node;
-                await DBManagerComponent.Instance.GetZoneDB(self.Parent.DomainZone()).Save(self);    
+                await DBManagerComponent.Instance.GetZoneDB(1).Save(self);    
             }
 
             return self;

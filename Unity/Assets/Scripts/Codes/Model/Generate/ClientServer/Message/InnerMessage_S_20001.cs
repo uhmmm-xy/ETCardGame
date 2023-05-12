@@ -445,7 +445,7 @@ namespace ET
 
 	[Message(InnerMessage.G2A_GateSession)]
 	[ProtoContract]
-	public partial class G2A_GateSession: ProtoObject, IActorRequest
+	public partial class G2A_GateSession: ProtoObject, IActorMessage
 	{
 		[ProtoMember(1)]
 		public int RpcId { get; set; }

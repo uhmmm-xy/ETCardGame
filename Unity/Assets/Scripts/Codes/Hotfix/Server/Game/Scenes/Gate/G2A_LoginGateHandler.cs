@@ -7,7 +7,7 @@ namespace ET
     {
         protected override async ETTask Run(Scene scene, A2G_LoginGate request, G2A_LoginGate response)
         {
-            string token = MD5Helper.FileMD5((request.PlayerId + TimeHelper.ServerNow()).ToString());
+            string token = MD5Helper.StringMD5((request.PlayerId + TimeHelper.ServerNow()).ToString());
             scene.GetComponent<TokenComponent>().Add(request.PlayerId,token);
             response.Token = token;
             await ETTask.CompletedTask;

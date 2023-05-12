@@ -13,6 +13,9 @@ namespace ET
 		[ProtoMember(2)]
 		public List<string> Routers { get; set; }
 
+		[ProtoMember(3)]
+		public List<string> Logins { get; set; }
+
 	}
 
 	[Message(OuterMessage.RouterSync)]

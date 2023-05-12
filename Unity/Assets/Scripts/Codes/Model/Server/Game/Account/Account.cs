@@ -1,7 +1,7 @@
 ﻿namespace ET
 {
     [ChildOf]
-    public class Account: Entity, IAwake<string>, IDestroy
+    public class Account: Entity, IAwake<string>,IAwake<int>, IDestroy
     {
         public int PlayerId;
         public long CreatedTime;
@@ -10,7 +10,7 @@
         public int LoginType;
         public int ChannelId;
     }
-
+    
     public enum LoginType
     {
         Wechat,

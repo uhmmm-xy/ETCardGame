@@ -8,7 +8,7 @@ namespace ET
         protected override async ETTask Run(Session session, C2L_LoginAccount request, L2C_LoginAccount response)
         {
             await ETTask.CompletedTask;
-            if (session.DomainScene().SceneType != SceneType.Account)
+            if (session.DomainScene().SceneType != SceneType.Login)
             {
                 Log.Error("Is not Scene!!");
                 session?.Disconnect();
@@ -68,6 +68,7 @@ namespace ET
                     response.Token = resp.Token;
                     response.GateIPAddress = resp.Gate;
                     account?.Dispose();
+                    session?.Disconnect();
                 }
             }
         }

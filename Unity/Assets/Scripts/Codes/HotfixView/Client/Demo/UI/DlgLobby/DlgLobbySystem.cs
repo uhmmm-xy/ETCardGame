@@ -12,11 +12,18 @@ namespace ET.Client
 
 		public static void RegisterUIEvent(this DlgLobby self)
 		{
-			self.View.E_EnterMapButton.AddListenerAsync(self.EnterMap);
+			self.View.E_EnterGameButton.AddListenerAsync(self.EnterMap);
+			self.View.E_ExitGameButton.AddListenerAsync(self.ExitGame);
 		}
 
 		public static void ShowWindow(this DlgLobby self, Entity contextData = null)
 		{
+		}
+
+		public static async ETTask ExitGame(this DlgLobby  self)
+		{
+			Log.Info("退出游戏！！！！");
+			await ETTask.CompletedTask;
 		}
 
 		public static async ETTask EnterMap(this DlgLobby self)

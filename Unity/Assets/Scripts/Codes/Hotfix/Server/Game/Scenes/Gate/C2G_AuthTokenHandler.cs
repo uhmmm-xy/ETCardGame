@@ -3,6 +3,7 @@ using ET.Server;
 namespace ET
 {
     [MessageHandler(SceneType.Gate)]
+    [FriendOf(typeof (Account))]
     public class C2G_AuthTokenHandler: AMRpcHandler<C2G_AuthToken, G2C_AuthToken>
     {
         protected override async ETTask Run(Session session, C2G_AuthToken request, G2C_AuthToken response)
@@ -15,11 +16,22 @@ namespace ET
                 return;
             }
 
+
+            Account account = await AccountHelper.GetAccount(playerId);
+            session.DomainScene().GetComponent<PlayerComponent>().AddChild(account);
+            await account.Init();
+            
+            account.AddComponent<SessionInfoComponent>().Session = session;
+
             StartSceneConfig startSceneConfig = StartSceneConfigCategory.Instance.GetBySceneName(session.DomainZone(), "Account");
             long loginCenterid = startSceneConfig.InstanceId;
-            await ActorMessageSenderComponent.Instance.Call(loginCenterid,
-                new G2A_GateSession() { PlayerId = playerId, SessionId = session.InstanceId });
-            
+            ActorMessageSenderComponent.Instance.Send(loginCenterid,
+                new G2A_GateSession() { PlayerId = account.PlayerId, SessionId = session.InstanceId });
+
+            account.AddComponent<MailBoxComponent, MailboxType>(MailboxType.GateSession);
+            await account.AddLocation(LocationType.Player);
+
+            response.Info = account.GetComponent<User>().ToInfo();
         }
     }
 }

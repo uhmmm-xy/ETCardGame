@@ -73,7 +73,7 @@ namespace ET.Server
                 }
                 case MailboxType.GateSession:
                 {
-                    if (entity is Player player)
+                    if (entity is Account player)
                     {
                         player.GetComponent<SessionInfoComponent>()?.Session?.Send(iActorRequest);
                     }
