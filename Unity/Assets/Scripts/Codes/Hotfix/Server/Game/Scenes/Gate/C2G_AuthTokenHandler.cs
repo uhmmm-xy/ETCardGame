@@ -18,6 +18,10 @@ namespace ET
 
 
             Account account = await AccountHelper.GetAccount(playerId);
+            if (session.DomainScene().GetComponent<PlayerComponent>().GetChild<Account>(account.Id)!=null)
+            {
+                session.DomainScene().GetComponent<PlayerComponent>().RemoveChild(account.Id);
+            }
             session.DomainScene().GetComponent<PlayerComponent>().AddChild(account);
             await account.Init();
             

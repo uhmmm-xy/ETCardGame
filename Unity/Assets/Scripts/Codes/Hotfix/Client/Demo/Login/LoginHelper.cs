@@ -38,13 +38,25 @@ namespace ET.Client
               
                 Log.Debug("登陆gate成功!");
                 Log.Info(g2CAuthToken.Info.ToJson());
-                
+
+                clientScene.AddComponent<Player, UserInfo>(g2CAuthToken.Info);
                 await EventSystem.Instance.PublishAsync(clientScene, new EventType.LoginFinish());
             }
             catch (Exception e)
             {
                 Log.Error(e);
             }
-        } 
+        }
+
+        public static async ETTask ExitGame(Scene clientScene)
+        {
+            clientScene.GetComponent<SessionComponent>().Dispose();
+            clientScene.RemoveComponent<SessionComponent>();
+            clientScene.GetComponent<NetClientComponent>().Dispose();
+            clientScene.RemoveComponent<NetClientComponent>();
+            clientScene.GetComponent<Player>().Dispose();
+            clientScene.RemoveComponent<Player>();
+            await EventSystem.Instance.PublishAsync(clientScene, new EventType.ExitGameLoginFinish());
+        }
     }
 }
