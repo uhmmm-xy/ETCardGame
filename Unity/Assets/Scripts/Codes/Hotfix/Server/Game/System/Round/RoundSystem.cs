@@ -8,9 +8,9 @@ namespace ET
     [FriendOf(typeof (Gamer))]
     public static class RoundSystem
     {
-        public class RoundAwakeSystem: AwakeSystem<Round, List<Card>, List<long>, int, int>
+        public class RoundAwakeSystem: AwakeSystem<Round, List<Card>, List<int>, int, int>
         {
-            protected override void Awake(Round self, List<Card> cards, List<long> players, int startIndex, int gameType)
+            protected override void Awake(Round self, List<Card> cards, List<int> players, int startIndex, int gameType)
             {
                 self.LibCards = cards;
                 self.Players = players;
@@ -32,7 +32,7 @@ namespace ET
             self.RoundStart();
         }
 
-        public static void SendCardToPlayer(this Round self, long playerid)
+        public static void SendCardToPlayer(this Round self, int playerid)
         {
             switch (self.GameType)
             {
@@ -97,7 +97,7 @@ namespace ET
             }
         }
 
-        public static void AllSendOutCardMessage(this Round self, long playerid)
+        public static void AllSendOutCardMessage(this Round self, int playerid)
         {
             // self.DomainScene().GetComponent<GamerComponent>().GetPlayer(playerid)
             //         .SendMessage(new M2C_AllOutCard() { Cards = self.OutCards });
@@ -108,7 +108,7 @@ namespace ET
             self.Players.ForEach(self.CheckPlayerOperate);
         }
 
-        public static void CheckPlayerOperate(this Round self, long playerId)
+        public static void CheckPlayerOperate(this Round self, int playerId)
         {
             bool ret = false;
             Gamer player = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(playerId);

@@ -1,6 +1,7 @@
 ﻿namespace ET
 {
     [ChildOf]
+    [ComponentOf]
     public class Account: Entity, IAwake<string>,IAwake<int>, IDestroy
     {
         public int PlayerId;

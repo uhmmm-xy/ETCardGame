@@ -2,8 +2,9 @@
 
 namespace ET
 {
-    [ComponentOf(typeof(Account))]
-    public class Gamer : Entity,IAwake<int,int,long>,IDestroy
+    [ChildOf(typeof(GamerComponent))]
+    [ComponentOf]
+    public class Gamer : Entity,IAwake<int,int>,IDestroy
     {
         public List<Card> HandCards = new ();//手牌
         public List<Card> OutCards = new();//弃牌
@@ -22,8 +23,6 @@ namespace ET
         public int RoomId;//所属房间ID
 
         public int PlayerId;//玩家ID
-
-        public long PlayerSessionId;//玩家会话ID
     }
     
 }

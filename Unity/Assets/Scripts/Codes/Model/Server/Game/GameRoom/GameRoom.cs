@@ -6,8 +6,8 @@ namespace ET
     public class GameRoom: Entity, IAwake<GameConfig, int>, IDestroy
     {
         public GameConfig Config; //游戏配置
-        public List<long> Players = new(); //玩家集合
-        public List<long> WatchPlayers = new(); //旁观玩家集合
+        public List<int> Players = new(); //玩家集合
+        public List<int> WatchPlayers = new(); //旁观玩家集合
 
         public int GameType;
 

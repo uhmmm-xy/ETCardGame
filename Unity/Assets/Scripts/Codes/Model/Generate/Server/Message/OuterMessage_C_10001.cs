@@ -626,6 +626,37 @@ namespace ET
 
 	}
 
+	[ResponseType(nameof(G2C_CreatedRoom))]
+	[Message(OuterMessage.C2G_CreatedRoom)]
+	[ProtoContract]
+	public partial class C2G_CreatedRoom: ProtoObject, IRequest
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int GameId { get; set; }
+
+	}
+
+	[Message(OuterMessage.G2C_CreatedRoom)]
+	[ProtoContract]
+	public partial class G2C_CreatedRoom: ProtoObject, IResponse
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int Error { get; set; }
+
+		[ProtoMember(3)]
+		public string Message { get; set; }
+
+		[ProtoMember(4)]
+		public int RoomId { get; set; }
+
+	}
+
 	public static class OuterMessage
 	{
 		 public const ushort HttpGetRouterResponse = 10002;
@@ -670,5 +701,7 @@ namespace ET
 		 public const ushort UserInfo = 10041;
 		 public const ushort C2G_AuthToken = 10042;
 		 public const ushort G2C_AuthToken = 10043;
+		 public const ushort C2G_CreatedRoom = 10044;
+		 public const ushort G2C_CreatedRoom = 10045;
 	}
 }

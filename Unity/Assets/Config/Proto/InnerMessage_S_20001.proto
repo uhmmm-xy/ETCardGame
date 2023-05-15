@@ -219,3 +219,20 @@ message G2A_GateSession // IActorMessage
     int64 SessionId = 2;
     int32 PlayerId = 3;
 }
+
+
+//ResponseType M2G_CreateRoom
+message G2M_CreateRoom // IActorRequest
+{
+    int32 RpcId = 1;
+    int32 PlayerId = 2;
+    int32 GameId = 3;
+}
+
+message M2G_CreateRoom // IActorResponse
+{
+    int32 RpcId = 1;
+    int32 Error = 2;
+    string Message = 3;
+    int32 RoomId = 4;
+}

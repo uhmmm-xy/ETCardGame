@@ -304,3 +304,17 @@ message G2C_AuthToken // IResponse
 	UserInfo Info = 4;
 }
 
+//ResponseType G2C_CreatedRoom
+message C2G_CreatedRoom // IRequest
+{
+	int32 RpcId = 1;
+	int32 GameId = 2;
+}
+
+message G2C_CreatedRoom // IResponse
+{
+	int32 RpcId = 1;
+	int32 Error = 2;
+	string Message = 3;
+	int32 RoomId = 4;
+}
