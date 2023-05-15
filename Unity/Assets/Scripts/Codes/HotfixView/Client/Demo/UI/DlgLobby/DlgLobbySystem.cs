@@ -13,7 +13,8 @@ namespace ET.Client
 
         public static void RegisterUIEvent(this DlgLobby self)
         {
-            self.View.E_EnterGameButton.AddListenerAsync(self.CreateRoom);
+            self.View.E_EnterGameButton.AddListenerAsync(self.EnterGame);
+            self.View.EButton_CreateRoomButton.AddListenerAsync(self.CreateRoom);
             self.View.E_ExitGameButton.AddListenerAsync(self.ExitGame);
             self.View.EButton_closeButton.AddListenerAsync(self.ClosePlan);
             self.View.EButton_PushRoomButton.AddListenerAsync(self.PushRoom);
@@ -33,9 +34,14 @@ namespace ET.Client
             await LoginHelper.ExitGame(self.ClientScene());
         }
 
-        public static async ETTask CreateRoom(this DlgLobby self)
+        public static async ETTask EnterGame(this DlgLobby self)
         {
             self.View.E_PushGamePlanImage.SetVisible(true);
+            await ETTask.CompletedTask;
+        }
+
+        public static async ETTask CreateRoom(this DlgLobby self)
+        {
             await GameRoomHelper.CreatedRoom(self.ClientScene());
             //await EnterMapHelper.EnterMapAsync(self.ClientScene());
             //self.ClientScene().GetComponent<UIComponent>().HideWindow(WindowID.WindowID_Lobby);
