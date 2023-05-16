@@ -13,6 +13,13 @@
 
         public static void AddPlayer(this GamerComponent self, Gamer player)
         {
+            if (self.PlayerIds.Contains(player.PlayerId))
+            {
+                self.Gamers[player.PlayerId].Dispose();
+                self.Gamers[player.PlayerId] = player;
+                return;
+            }
+
             self.Gamers.Add(player.PlayerId, player);
             self.PlayerIds.Add(player.PlayerId);
         }

@@ -17,6 +17,7 @@ namespace ET.Client
 
 		public static void ShowWindow(this DlgGameRoom self, Entity contextData = null)
 		{
+			self.View.E_GamePlanImage.SetVisible(false);
 		}
 
 		public static async ETTask ExitRoom(this DlgGameRoom self)

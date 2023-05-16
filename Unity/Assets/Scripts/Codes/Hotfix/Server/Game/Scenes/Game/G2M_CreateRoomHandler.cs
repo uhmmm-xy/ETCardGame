@@ -11,14 +11,17 @@ namespace ET
             GameRoomComponent gameRoomComponent = scene.GetComponent<GameRoomComponent>();
             GamerComponent gamerComponent = scene.GetComponent<GamerComponent>();
 
-            GameRoom gameRoom = await gameRoomComponent.CreateRoom(request.GameId);
+            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameCreateRoom,request.PlayerId))
+            {
+                GameRoom gameRoom = await gameRoomComponent.CreateRoom(request.GameId);
 
-            Gamer gamer = gamerComponent.AddChild<Gamer, int, int>(gameRoom.RoomId, request.PlayerId);
-            await gamer.Init();
+                Gamer gamer = gamerComponent.AddChild<Gamer, int, int>(gameRoom.RoomId, request.PlayerId);
+                await gamer.Init();
 
-            gamerComponent.AddPlayer(gamer);
+                gamerComponent.AddPlayer(gamer);
 
-            response.RoomId = gameRoom.RoomId;
+                response.RoomId = gameRoom.RoomId;
+            }
         }
     }
 }
