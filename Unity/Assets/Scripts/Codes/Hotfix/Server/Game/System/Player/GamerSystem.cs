@@ -11,15 +11,15 @@ namespace ET
             {
                 self.RoomId = roomId;
                 self.PlayerId = playerId;
-                self.Init().Coroutine();
             }
         }
 
         public static async ETTask Init(this Gamer self)
         {
             Account account = await AccountHelper.GetAccount(self.PlayerId);
-            account.AddComponent<MailBoxComponent>();
             self.AddComponent(account);
+            account.AddComponent<MailBoxComponent>();
+            await account.AddLocation(LocationType.Game);
         }
 
         public static void SendMessage(this Gamer self, IActorLocationRequest message)

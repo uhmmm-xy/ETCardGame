@@ -28,6 +28,7 @@ namespace ET
             account.AddComponent<SessionInfoComponent>().Session = session;
 
             session.AddComponent(account);
+            session.RemoveComponent<SessionAcceptTimeoutComponent>();
 
             StartSceneConfig startSceneConfig = StartSceneConfigCategory.Instance.GetBySceneName(session.DomainZone(), "Account");
             long loginCenterid = startSceneConfig.InstanceId;

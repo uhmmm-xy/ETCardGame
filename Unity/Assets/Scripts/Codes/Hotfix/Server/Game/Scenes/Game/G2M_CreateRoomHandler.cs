@@ -14,9 +14,8 @@ namespace ET
             GameRoom gameRoom = await gameRoomComponent.CreateRoom(request.GameId);
 
             Gamer gamer = gamerComponent.AddChild<Gamer, int, int>(gameRoom.RoomId, request.PlayerId);
-            
-            await gamer.GetComponent<Account>().AddLocation(LocationType.Game);
-            
+            await gamer.Init();
+
             gamerComponent.AddPlayer(gamer);
 
             response.RoomId = gameRoom.RoomId;
