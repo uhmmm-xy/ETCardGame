@@ -50,5 +50,15 @@ namespace ET
             return room;
         }
 
+        public static GameRoom GetRoom(this GameRoomComponent self,int roomId)
+        {
+            if (self.GameRoomIds.Contains(roomId))
+            {
+                return self.GameRooms[roomId];
+            }
+
+            return null;
+        }
+
     }
 }

@@ -492,6 +492,40 @@ namespace ET
 
 	}
 
+	[ResponseType(nameof(M2G_EnterRoom))]
+	[Message(InnerMessage.G2M_EnterRoom)]
+	[ProtoContract]
+	public partial class G2M_EnterRoom: ProtoObject, IActorRequest
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int RoomId { get; set; }
+
+		[ProtoMember(3)]
+		public int PlayerId { get; set; }
+
+	}
+
+	[Message(InnerMessage.M2G_EnterRoom)]
+	[ProtoContract]
+	public partial class M2G_EnterRoom: ProtoObject, IActorResponse
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int Error { get; set; }
+
+		[ProtoMember(3)]
+		public string Message { get; set; }
+
+		[ProtoMember(4)]
+		public int RoomId { get; set; }
+
+	}
+
 	public static class InnerMessage
 	{
 		 public const ushort ObjectQueryRequest = 20002;
@@ -524,5 +558,7 @@ namespace ET
 		 public const ushort G2A_GateSession = 20029;
 		 public const ushort G2M_CreateRoom = 20030;
 		 public const ushort M2G_CreateRoom = 20031;
+		 public const ushort G2M_EnterRoom = 20032;
+		 public const ushort M2G_EnterRoom = 20033;
 	}
 }

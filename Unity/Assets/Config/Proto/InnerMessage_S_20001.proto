@@ -236,3 +236,19 @@ message M2G_CreateRoom // IActorResponse
     string Message = 3;
     int32 RoomId = 4;
 }
+
+//ResponseType M2G_EnterRoom
+message G2M_EnterRoom // IActorRequest
+{
+    int32 RpcId = 1;
+    int32 RoomId = 2;
+    int32 PlayerId = 3;
+}
+
+message M2G_EnterRoom // IActorResponse
+{
+    int32 RpcId = 1;
+    int32 Error = 2;
+    string Message = 3;
+    int32 RoomId = 4;
+}

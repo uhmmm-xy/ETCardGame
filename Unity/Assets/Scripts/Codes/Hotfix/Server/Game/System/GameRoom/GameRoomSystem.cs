@@ -127,5 +127,18 @@ namespace ET
                 //gamePlayer.SendMessage(new M2C_PlayerReadying() { PlayerIds = readyplayer });
             });
         }
+
+        public static RoomInfo ToInfo(this GameRoom self)
+        {
+            RoomInfo roomInfo = new RoomInfo();
+            roomInfo.RoomId = self.RoomId;
+            roomInfo.Status = self.RoomStatus;
+            foreach (int player in self.Players)
+            {
+                Gamer gamer = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(player);
+                roomInfo.Players.Add(gamer.ToInfo());
+            }
+            return roomInfo;
+        }
     }
 }

@@ -13,9 +13,25 @@ namespace ET.Client
             }
         }
 
-        public static async ETTask EnterRoom(Scene client, int RoomId)
+        public static async ETTask EnterRoom(Scene client, int roomId)
         {
-            await EventSystem.Instance.PublishAsync(client, new EventType.EnterRoom() { RoomId = RoomId });
+            G2C_EnterRoom g2CEnterRoom =
+                    await client.GetComponent<SessionComponent>().Session.Call(new C2G_EnterRoom() { GameId = 1001, RoomId = roomId }) as
+                            G2C_EnterRoom;
+            if (g2CEnterRoom.Error != ErrorCode.ERR_Success)
+            {
+                Log.Info($"ErrorCode: {g2CEnterRoom.Error} Message : {g2CEnterRoom.Message}");
+                return;
+            }
+
+            await EventSystem.Instance.PublishAsync(client, new EventType.EnterRoom() { RoomId = roomId });
+        }
+
+        public static async ETTask<RoomInfo> GetRoomInfo(Scene client, int roomId)
+        {
+            M2C_RoomInfo m2CRoomInfo =
+                    await client.GetComponent<SessionComponent>().Session.Call(new C2M_RoomInfo() { RoomId = roomId }) as M2C_RoomInfo;
+            return m2CRoomInfo.Info;
         }
     }
 }

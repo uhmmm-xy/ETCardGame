@@ -10,6 +10,7 @@ namespace ET
         public List<int> Score; //分数
         public List<int> Players; //玩家
 
+        public int StartIndex;
         public int PlayerIndex; //当前回合玩家
         public int GameType;
         public RoundStatus Status;

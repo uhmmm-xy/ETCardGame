@@ -9,6 +9,7 @@ namespace ET
     {
         public List<Card> HandCards = new ();//手牌
         public List<Card> OutCards = new();//弃牌
+        public List<Card> OpenDeal = new();
         public int Score; //分数
 
         public Dictionary<Card, int> Operate = new();

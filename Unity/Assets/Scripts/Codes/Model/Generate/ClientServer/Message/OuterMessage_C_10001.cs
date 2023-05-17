@@ -657,6 +657,149 @@ namespace ET
 
 	}
 
+	[ResponseType(nameof(G2C_EnterRoom))]
+	[Message(OuterMessage.C2G_EnterRoom)]
+	[ProtoContract]
+	public partial class C2G_EnterRoom: ProtoObject, IRequest
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int RoomId { get; set; }
+
+		[ProtoMember(3)]
+		public int GameId { get; set; }
+
+	}
+
+	[Message(OuterMessage.G2C_EnterRoom)]
+	[ProtoContract]
+	public partial class G2C_EnterRoom: ProtoObject, IResponse
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int Error { get; set; }
+
+		[ProtoMember(3)]
+		public string Message { get; set; }
+
+		[ProtoMember(4)]
+		public int RoomId { get; set; }
+
+	}
+
+	[Message(OuterMessage.CardInfo)]
+	[ProtoContract]
+	public partial class CardInfo: ProtoObject
+	{
+		[ProtoMember(1)]
+		public int Type { get; set; }
+
+		[ProtoMember(2)]
+		public int Value { get; set; }
+
+	}
+
+	[Message(OuterMessage.GamerInfo)]
+	[ProtoContract]
+	public partial class GamerInfo: ProtoObject
+	{
+		[ProtoMember(1)]
+		public int PlayerId { get; set; }
+
+		[ProtoMember(2)]
+		public List<CardInfo> OutCards { get; set; }
+
+		[ProtoMember(3)]
+		public string Hander { get; set; }
+
+		[ProtoMember(4)]
+		public string Name { get; set; }
+
+		[ProtoMember(5)]
+		public List<CardInfo> OpenDeal { get; set; }
+
+		[ProtoMember(6)]
+		public int Score { get; set; }
+
+		[ProtoMember(7)]
+		public int Status { get; set; }
+
+		[ProtoMember(5)]
+		public List<CardInfo> HandCards { get; set; }
+
+	}
+
+	[Message(OuterMessage.RoundInfo)]
+	[ProtoContract]
+	public partial class RoundInfo: ProtoObject
+	{
+		[ProtoMember(1)]
+		public int StartIndex { get; set; }
+
+		[ProtoMember(2)]
+		public List<int> Score { get; set; }
+
+		[ProtoMember(3)]
+		public int PlayerIndex { get; set; }
+
+		[ProtoMember(4)]
+		public int Status { get; set; }
+
+	}
+
+	[Message(OuterMessage.RoomInfo)]
+	[ProtoContract]
+	public partial class RoomInfo: ProtoObject
+	{
+		[ProtoMember(1)]
+		public int RoomId { get; set; }
+
+		[ProtoMember(2)]
+		public List<GamerInfo> Players { get; set; }
+
+		[ProtoMember(3)]
+		public List<RoundInfo> Rounds { get; set; }
+
+		[ProtoMember(4)]
+		public int Status { get; set; }
+
+	}
+
+	[ResponseType(nameof(M2C_RoomInfo))]
+	[Message(OuterMessage.C2M_RoomInfo)]
+	[ProtoContract]
+	public partial class C2M_RoomInfo: ProtoObject, IActorLocationRequest
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int RoomId { get; set; }
+
+	}
+
+	[Message(OuterMessage.M2C_RoomInfo)]
+	[ProtoContract]
+	public partial class M2C_RoomInfo: ProtoObject, IActorLocationResponse
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int Error { get; set; }
+
+		[ProtoMember(3)]
+		public string Message { get; set; }
+
+		[ProtoMember(4)]
+		public RoomInfo Info { get; set; }
+
+	}
+
 	public static class OuterMessage
 	{
 		 public const ushort HttpGetRouterResponse = 10002;
@@ -703,5 +846,13 @@ namespace ET
 		 public const ushort G2C_AuthToken = 10043;
 		 public const ushort C2G_CreatedRoom = 10044;
 		 public const ushort G2C_CreatedRoom = 10045;
+		 public const ushort C2G_EnterRoom = 10046;
+		 public const ushort G2C_EnterRoom = 10047;
+		 public const ushort CardInfo = 10048;
+		 public const ushort GamerInfo = 10049;
+		 public const ushort RoundInfo = 10050;
+		 public const ushort RoomInfo = 10051;
+		 public const ushort C2M_RoomInfo = 10052;
+		 public const ushort M2C_RoomInfo = 10053;
 	}
 }

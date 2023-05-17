@@ -8,6 +8,7 @@ namespace ET
         public GameConfig Config; //游戏配置
         public List<int> Players = new(); //玩家集合
         public List<int> WatchPlayers = new(); //旁观玩家集合
+        public List<Round> Rounds = new();
 
         public int GameType;
 
