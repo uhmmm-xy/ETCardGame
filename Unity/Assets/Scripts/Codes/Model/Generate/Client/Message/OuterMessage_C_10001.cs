@@ -728,7 +728,7 @@ namespace ET
 		[ProtoMember(7)]
 		public int Status { get; set; }
 
-		[ProtoMember(5)]
+		[ProtoMember(8)]
 		public List<CardInfo> HandCards { get; set; }
 
 	}

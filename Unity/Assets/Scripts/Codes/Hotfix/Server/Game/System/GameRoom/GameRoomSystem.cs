@@ -131,6 +131,8 @@ namespace ET
         public static RoomInfo ToInfo(this GameRoom self)
         {
             RoomInfo roomInfo = new RoomInfo();
+            roomInfo.Players = new();
+            roomInfo.Rounds = new();
             roomInfo.RoomId = self.RoomId;
             roomInfo.Status = self.RoomStatus;
             foreach (int player in self.Players)
@@ -138,6 +140,7 @@ namespace ET
                 Gamer gamer = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(player);
                 roomInfo.Players.Add(gamer.ToInfo());
             }
+            Log.Info(roomInfo.ToJson()+$"playerCount : {self.Players.Count}");
             return roomInfo;
         }
     }

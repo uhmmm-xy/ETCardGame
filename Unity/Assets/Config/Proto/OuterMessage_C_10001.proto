@@ -350,7 +350,7 @@ message GamerInfo
 	repeated CardInfo OpenDeal = 5;
 	int32 Score = 6;
 	int32 Status = 7;
-	repeated CardInfo HandCards = 5;
+	repeated CardInfo HandCards = 8;
 }
 
 message RoundInfo

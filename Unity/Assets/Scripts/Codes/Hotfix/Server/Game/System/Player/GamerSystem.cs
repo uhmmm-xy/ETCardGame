@@ -19,6 +19,7 @@ namespace ET
         {
             Account account = await AccountHelper.GetAccount(self.PlayerId);
             self.AddComponent(account);
+            await account.Init();
             account.AddComponent<MailBoxComponent>();
             await account.AddLocation(LocationType.Game);
         }
