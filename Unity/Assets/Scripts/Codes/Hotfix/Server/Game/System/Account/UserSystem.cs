@@ -45,7 +45,7 @@ namespace ET
                 self.Gender = user.Gender;
                 self.Jewel = user.Jewel;
                 self.Status = user.Status;
-                self.RoomNumber = self.RoomNumber;
+                self.RoomNumber = user.RoomNumber;
             }
             else
             {
