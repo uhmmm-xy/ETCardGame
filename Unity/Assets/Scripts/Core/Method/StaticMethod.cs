@@ -1,8 +1,10 @@
+using System;
+using System.Linq;
 using System.Reflection;
 
 namespace ET
 {
-    public class StaticMethod : IStaticMethod
+    public class StaticMethod: IStaticMethod
     {
         private readonly MethodInfo methodInfo;
 
@@ -10,7 +12,17 @@ namespace ET
 
         public StaticMethod(Assembly assembly, string typeName, string methodName)
         {
-            this.methodInfo = assembly.GetType(typeName).GetMethod(methodName);
+            if (assembly is null)
+            {
+                throw new Exception("Assembly is NULL");
+            }
+
+            Log.Info($"Type is Ready {assembly.GetName().Name}, TypeCount:{assembly.ExportedTypes.Count()}, Read TypeName:{typeName},Method:{methodName}");
+            Type type = assembly.GetType(typeName);
+            Log.Info($"Type is Ready {type.Namespace},{type.Name}");
+            MethodInfo method = type.GetMethod(methodName);
+            Log.Info($"MethodInfo is Ready {method.Name}");
+            this.methodInfo = method;
             this.param = new object[this.methodInfo.GetParameters().Length];
         }
 
@@ -41,4 +53,3 @@ namespace ET
         }
     }
 }
-

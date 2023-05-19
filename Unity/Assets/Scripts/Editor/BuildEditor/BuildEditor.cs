@@ -64,6 +64,16 @@ namespace ET
 #endif
             platformType = activePlatform;
         }
+        
+        private static void CompileForAOTMetaDll()
+        {
+	        HybridCLR.Editor.Commands.CompileDllCommand.CompileDll(EditorUserBuildSettings.activeBuildTarget);
+        }
+        
+        private static void CopyModelAndHotfixToHotUpdateDlls()
+        {
+	        HybridCLR.Editor.Commands.CompileDllCommand.CompileDll(EditorUserBuildSettings.activeBuildTarget);
+        }
 
         private void OnGUI() 
 		{
@@ -122,6 +132,32 @@ namespace ET
 				EditorUtility.SetDirty(this.globalConfig);
 				AssetDatabase.SaveAssets();
 			}
+			
+			
+			if (GUILayout.Button("BuildWolong"))
+			{
+				if (Define.EnableCodes)
+				{
+					//throw new Exception("now in ENABLE_CODES mode, do not need Build!");
+				}
+				BuildAssembliesHelper.BuildModel(this.codeOptimization, globalConfig);
+				BuildAssembliesHelper.BuildHotfix(this.codeOptimization, globalConfig);
+
+				CompileForAOTMetaDll();
+
+				AfterCompiling();
+
+				CopyModelAndHotfixToHotUpdateDlls();
+
+				ShowNotification("Build Model And Hotfix Success!");
+			}
+
+			if (GUILayout.Button("CopyWolongAssembliesToStreamingAssets"))
+			{
+				BuildHelper.CopyAOTAssembliesToStreamingAssets();
+				BuildHelper.CopyHotUpdateAssembliesToStreamingAssets();
+			}
+
 			
 			if (GUILayout.Button("BuildModelAndHotfix"))
 			{

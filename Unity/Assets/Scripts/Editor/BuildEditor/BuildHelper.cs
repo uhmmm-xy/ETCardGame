@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using HybridCLR.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -30,66 +31,82 @@ namespace ET
             Debug.Log("ReGenerateProjectFiles finished.");
         }
 
-              
+        
 #if ENABLE_CODES
         [MenuItem("ET/ChangeDefine/Remove ENABLE_CODES")]
         public static void RemoveEnableCodes()
         {
-            EnableDefineSymbols("ENABLE_CODES", false);
+            EnableCodes(false);
         }
 #else
         [MenuItem("ET/ChangeDefine/Add ENABLE_CODES")]
         public static void AddEnableCodes()
         {
-            EnableDefineSymbols("ENABLE_CODES", true);
+            EnableCodes(true);
         }
 #endif
-
+        private static void EnableCodes(bool enable)
+        {
+            string defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            var ss = defines.Split(';').ToList();
+            if (enable)
+            {
+                if (ss.Contains("ENABLE_CODES"))
+                {
+                    return;
+                }
+                ss.Add("ENABLE_CODES");
+            }
+            else
+            {
+                if (!ss.Contains("ENABLE_CODES"))
+                {
+                    return;
+                }
+                ss.Remove("ENABLE_CODES");
+            }
+            defines = string.Join(";", ss);
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, defines);
+            AssetDatabase.SaveAssets();
+        }
+        
 #if ENABLE_VIEW
         [MenuItem("ET/ChangeDefine/Remove ENABLE_VIEW")]
         public static void RemoveEnableView()
         {
-            EnableDefineSymbols("ENABLE_VIEW", false);
+            EnableView(false);
         }
 #else
         [MenuItem("ET/ChangeDefine/Add ENABLE_VIEW")]
         public static void AddEnableView()
         {
-            EnableDefineSymbols("ENABLE_VIEW", true);
+            EnableView(true);
         }
 #endif
-        public static void EnableDefineSymbols(string symbols, bool enable)
+        private static void EnableView(bool enable)
         {
-            Log.Debug($"EnableDefineSymbols {symbols} {enable}");
             string defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
             var ss = defines.Split(';').ToList();
             if (enable)
             {
-                if (ss.Contains(symbols))
+                if (ss.Contains("ENABLE_VIEW"))
                 {
                     return;
                 }
-                ss.Add(symbols);
+                ss.Add("ENABLE_VIEW");
             }
             else
             {
-                if (!ss.Contains(symbols))
+                if (!ss.Contains("ENABLE_VIEW"))
                 {
                     return;
                 }
-                ss.Remove(symbols);
+                ss.Remove("ENABLE_VIEW");
             }
-            BuildHelper.ShowNotification($"EnableDefineSymbols {symbols} {enable}");
+            
             defines = string.Join(";", ss);
             PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, defines);
             AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-        }
-        
-        public static void ShowNotification(string tips)
-        {
-            EditorWindow game = EditorWindow.GetWindow(typeof(EditorWindow).Assembly.GetType("UnityEditor.GameView"));
-            game?.ShowNotification(new GUIContent($"{tips}"));
         }
 
         public static void Build(PlatformType type, BuildAssetBundleOptions buildAssetBundleOptions, BuildOptions buildOptions, bool isBuildExe, bool isContainAB, bool clearFolder)
@@ -113,10 +130,6 @@ namespace ET
                 case PlatformType.MacOS:
                     buildTarget = BuildTarget.StandaloneOSX;
                     break;
-                
-                case PlatformType.Linux:
-                    buildTarget = BuildTarget.StandaloneLinux64;
-                    break;
             }
 
             string fold = string.Format(BuildFolder, type);
@@ -136,6 +149,9 @@ namespace ET
             {
                 FileHelper.CleanDirectory("Assets/StreamingAssets/");
                 FileHelper.CopyDirectory(fold, "Assets/StreamingAssets/");
+
+                CopyAOTAssembliesToStreamingAssets();
+                CopyHotUpdateAssembliesToStreamingAssets();
             }
 
             if (isBuildExe)
@@ -159,5 +175,42 @@ namespace ET
                 }
             }
         }
+
+        public static void CopyAOTAssembliesToStreamingAssets()
+        {
+            var target = EditorUserBuildSettings.activeBuildTarget;
+            string aotAssembliesSrcDir = SettingsUtil.GetAssembliesPostIl2CppStripDir(target);
+            string aotAssembliesDstDir = Application.streamingAssetsPath;
+            if(!Directory.Exists(Application.streamingAssetsPath))
+            {
+                Directory.CreateDirectory(Application.streamingAssetsPath);
+            }
+
+            foreach (var dll in CodeLoader.AOTMetaAssemblyNames)
+            {
+                string srcDllPath = $"{aotAssembliesSrcDir}/{dll}";
+                if (!File.Exists(srcDllPath))
+                {
+                    Debug.LogError($"ab中添加AOT补充元数据dll:{srcDllPath} 时发生错误,文件不存在。裁剪后的AOT dll在BuildPlayer时才能生成，因此需要你先构建一次游戏App后再打包。");
+                    continue;
+                }
+                string dllBytesPath = $"{aotAssembliesDstDir}/{dll}.bytes";
+                File.Copy(srcDllPath, dllBytesPath, true);
+                Debug.Log($"[CopyAOTAssembliesToStreamingAssets] copy AOT dll {srcDllPath} -> {dllBytesPath}");
+            }
+        }
+
+        public static void CopyHotUpdateAssembliesToStreamingAssets()
+        {
+            foreach (var dll in SettingsUtil.HotUpdateAssemblyFiles)
+            {
+                string targetPath = Path.Combine(relativeDirPrefix, $"ET_Data/StreamingAssets/");
+                File.Copy(Path.Combine(Define.BuildOutputDir,dll), Path.Combine(Application.streamingAssetsPath,$"{dll}.bytes"), true);
+                File.Copy(Path.Combine(Define.BuildOutputDir,dll), Path.Combine(targetPath,$"{dll}.bytes"), true);
+                Debug.Log($"[CopyHotUpdateAssembliesToStreamingAssets] copy hotfix dll {dll}");
+            }
+        }
+
     }
 }
+

@@ -6,6 +6,8 @@ namespace ET.Client
         {
             G2C_CreatedRoom g2CCreatedRoom =
                     await client.GetComponent<SessionComponent>().Session.Call(new C2G_CreatedRoom() { GameId = 1001 }) as G2C_CreatedRoom;
+            
+            Log.Info("dsadf111!");
 
             if (g2CCreatedRoom.Error == ErrorCode.ERR_Success)
             {
