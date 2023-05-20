@@ -383,3 +383,21 @@ message M2C_RoomInfo // IActorLocationResponse
 	string Message = 3;
 	RoomInfo Info = 4;
 }
+
+message G2M_UpdateRoom // IActorLocationMessage
+{
+    int32 RpcId = 1;
+}
+
+//ResponseType M2C_GamerReady
+message C2M_GamerReady // IActorLocationRequest
+{
+	int32 RpcId = 1;
+}
+
+message M2C_GamerReady // IActorLocationResponse
+{
+	int32 RpcId = 1;
+	int32 Error = 2;
+	string Message = 3;
+}

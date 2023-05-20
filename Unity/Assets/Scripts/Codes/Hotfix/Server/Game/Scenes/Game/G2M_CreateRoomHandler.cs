@@ -16,11 +16,21 @@ namespace ET
             {
                 GameRoom gameRoom = await gameRoomComponent.CreateRoom(request.GameId);
 
-                Gamer gamer = gamerComponent.AddChild<Gamer, int, int>(gameRoom.RoomId, request.PlayerId);
-                await gamer.Init();
+                Gamer gamer = null;
 
-                gamerComponent.AddPlayer(gamer);
-                gameRoom.AddPlayer(gamer.PlayerId);
+                if ((gamer = gamerComponent.GetPlayer(request.PlayerId)) == null)
+                {
+                    gamer = gamerComponent.AddChild<Gamer, int>(request.PlayerId);
+                    await gamer.Init();
+                    gamerComponent.AddPlayer(gamer);
+                }
+
+                if (!gamer.ChangeRoom(gameRoom.RoomId))
+                {
+                    response.Error = ErrorCode.ERR_RoomEnterFail;
+                    response.Message = ErrorMessage.RoomEnterFail;
+                    return;
+                }
 
                 response.RoomId = gameRoom.RoomId;
             }

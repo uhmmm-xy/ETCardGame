@@ -29,7 +29,6 @@ namespace ET
             {
                 self.CardTypeEach(cardId);
             }
-            Log.Info($"card long {self.Cards.Count}");
         }
 
         private static void CardTypeEach(this CardComponent self, int CardId)
@@ -52,7 +51,6 @@ namespace ET
 
         public static List<Card> GetCard(this CardComponent self)
         {
-            Log.Info($"card long is update????  {self.Cards.Count}");
             return self.Cards;
         }
     }

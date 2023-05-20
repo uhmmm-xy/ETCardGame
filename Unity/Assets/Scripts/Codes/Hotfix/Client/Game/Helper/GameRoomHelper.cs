@@ -6,8 +6,6 @@ namespace ET.Client
         {
             G2C_CreatedRoom g2CCreatedRoom =
                     await client.GetComponent<SessionComponent>().Session.Call(new C2G_CreatedRoom() { GameId = 1001 }) as G2C_CreatedRoom;
-            
-            Log.Info("dsadf111!");
 
             if (g2CCreatedRoom.Error == ErrorCode.ERR_Success)
             {
@@ -27,6 +25,17 @@ namespace ET.Client
             }
 
             await EventSystem.Instance.PublishAsync(client, new EventType.EnterRoom() { RoomId = roomId });
+        }
+
+        public static async ETTask GamerReady(Scene client)
+        {
+            M2C_GamerReady m2CGamerReady = await client.GetComponent<SessionComponent>().Session.Call(new C2M_GamerReady()) as M2C_GamerReady;
+            if (m2CGamerReady.Error != ErrorCode.ERR_Success)
+            {
+                Log.Info($"ErrorCode: {m2CGamerReady.Error} Message : {m2CGamerReady.Message}");
+                return;
+            }
+            await EventSystem.Instance.PublishAsync(client, new EventType.UpdateRoom());
         }
 
         public static async ETTask<RoomInfo> GetRoomInfo(Scene client, int roomId)

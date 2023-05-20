@@ -800,6 +800,40 @@ namespace ET
 
 	}
 
+	[Message(OuterMessage.G2M_UpdateRoom)]
+	[ProtoContract]
+	public partial class G2M_UpdateRoom: ProtoObject, IActorLocationMessage
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+	}
+
+	[ResponseType(nameof(M2C_GamerReady))]
+	[Message(OuterMessage.C2M_GamerReady)]
+	[ProtoContract]
+	public partial class C2M_GamerReady: ProtoObject, IActorLocationRequest
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+	}
+
+	[Message(OuterMessage.M2C_GamerReady)]
+	[ProtoContract]
+	public partial class M2C_GamerReady: ProtoObject, IActorLocationResponse
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int Error { get; set; }
+
+		[ProtoMember(3)]
+		public string Message { get; set; }
+
+	}
+
 	public static class OuterMessage
 	{
 		 public const ushort HttpGetRouterResponse = 10002;
@@ -854,5 +888,8 @@ namespace ET
 		 public const ushort RoomInfo = 10051;
 		 public const ushort C2M_RoomInfo = 10052;
 		 public const ushort M2C_RoomInfo = 10053;
+		 public const ushort G2M_UpdateRoom = 10054;
+		 public const ushort C2M_GamerReady = 10055;
+		 public const ushort M2C_GamerReady = 10056;
 	}
 }

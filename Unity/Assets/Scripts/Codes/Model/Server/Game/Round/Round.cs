@@ -9,6 +9,7 @@ namespace ET
         public List<Card> OutCards = new (); //弃牌
         public List<int> Score; //分数
         public List<int> Players; //玩家
+        public Dictionary<int, int> PlayConfig = new();
 
         public int StartIndex;
         public int PlayerIndex; //当前回合玩家

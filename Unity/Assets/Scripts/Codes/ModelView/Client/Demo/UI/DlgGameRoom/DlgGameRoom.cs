@@ -4,9 +4,9 @@
 	public  class DlgGameRoom :Entity,IAwake,IUILogic
 	{
 
-		public DlgGameRoomViewComponent View { get => this.GetComponent<DlgGameRoomViewComponent>();} 
+		public DlgGameRoomViewComponent View { get => this.GetComponent<DlgGameRoomViewComponent>();}
 
-		 
+		public int RoomId;
 
 	}
 }

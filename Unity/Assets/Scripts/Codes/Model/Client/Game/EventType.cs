@@ -5,4 +5,7 @@ namespace ET.EventType
         public int RoomId;
     }
 
+    public struct UpdateRoom
+    {
+    }
 }

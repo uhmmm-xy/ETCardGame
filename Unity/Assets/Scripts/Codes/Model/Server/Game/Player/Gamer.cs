@@ -5,7 +5,7 @@ namespace ET
 {
     [ChildOf(typeof(GamerComponent))]
     [ComponentOf]
-    public class Gamer : Entity,IAwake<int,int>,IDestroy
+    public class Gamer : Entity,IAwake<int>,IDestroy
     {
         public List<Card> HandCards = new ();//手牌
         public List<Card> OutCards = new();//弃牌

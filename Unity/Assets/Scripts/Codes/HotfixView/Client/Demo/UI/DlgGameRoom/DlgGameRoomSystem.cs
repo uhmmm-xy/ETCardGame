@@ -13,6 +13,7 @@ namespace ET.Client
         public static void RegisterUIEvent(this DlgGameRoom self)
         {
             self.View.EButton_ExitButton.AddListenerAsync(self.ExitRoom);
+            self.View.EButton_ReadyButton.AddListenerAsync(self.ReadyEvent);
         }
 
         public static void ShowWindow(this DlgGameRoom self, Entity contextData = null)
@@ -20,9 +21,14 @@ namespace ET.Client
             //self.View.E_GamePlanImage.SetVisible();
         }
 
-        public static async ETTask InitAsync(this DlgGameRoom self, int roomId)
+        public static async ETTask InitAsync(this DlgGameRoom self)
         {
-            RoomInfo info = await GameRoomHelper.GetRoomInfo(self.ClientScene(), roomId);
+            self.View.ELabel_PlayerLeftText.text = "";
+            self.View.ELabel_PlayerReightText.text = "";
+            self.View.ELabel_PlayerUpText.text = "";
+            self.View.ELabel_PlayerDownText.text = "";
+            
+            RoomInfo info = await GameRoomHelper.GetRoomInfo(self.ClientScene(), self.RoomId);
             Player My = self.DomainScene().GetComponent<Player>();
 
             List<string> playerids = new();
@@ -31,7 +37,7 @@ namespace ET.Client
             for (int i = 0; i < info.Players.Count; i++)
             {
                 string ready = info.Players[i].Status == PlayerStatus.Ready? "Ready" : "";
-                playerids.Add($"{My.PlayerId}  {ready}");
+                playerids.Add($"{info.Players[i].PlayerId}  {ready}");
                 if (info.Players[i].PlayerId == My.PlayerId)
                 {
                     myindex = i;
@@ -40,18 +46,36 @@ namespace ET.Client
 
             int index = myindex;
             self.View.ELabel_PlayerDownText.text = playerids[index];
-            index = (index + 1) >= playerids.Count? +1 : 0;
+            index = self.NextPlayer(index, playerids.Count);
             if (playerids.Count > 1) self.View.ELabel_PlayerReightText.text = playerids[index];
-            index = (index + 1) >= playerids.Count? +1 : 0;
+            index = self.NextPlayer(index, playerids.Count);
             if (playerids.Count > 2) self.View.ELabel_PlayerUpText.text = playerids[index];
-            index = (index + 1) >= playerids.Count? +1 : 0;
+            index = self.NextPlayer(index, playerids.Count);
             if (playerids.Count > 3) self.View.ELabel_PlayerLeftText.text = playerids[index];
+        }
+        
+
+        static int NextPlayer(this DlgGameRoom self, int index, int count)
+        {
+            index++;
+            if (index >= count)
+            {
+                index = 0;
+            }
+
+            Log.Info($"index change {index}");
+            return index;
         }
 
         public static async ETTask ExitRoom(this DlgGameRoom self)
         {
             self.DomainScene().GetComponent<UIComponent>().HideWindow(WindowID.WindowID_GameRoom);
             await ETTask.CompletedTask;
+        }
+
+        public static async ETTask ReadyEvent(this DlgGameRoom self)
+        {
+            await GameRoomHelper.GamerReady(self.ClientScene());
         }
     }
 }

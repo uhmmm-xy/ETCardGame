@@ -4,13 +4,13 @@ namespace ET
 {
     [FriendOf(typeof(Gamer))]
     [FriendOf(typeof(User))]
+    [FriendOf(typeof(GameRoom))]
     public static class GamerSystem
     {
-        public class GamePlayerAwakeSystem : AwakeSystem<Gamer, int, int>
+        public class GamePlayerAwakeSystem : AwakeSystem<Gamer, int>
         {
-            protected override void Awake(Gamer self, int roomId, int playerId)
+            protected override void Awake(Gamer self, int playerId)
             {
-                self.RoomId = roomId;
                 self.PlayerId = playerId;
             }
         }
@@ -24,7 +24,24 @@ namespace ET
             await account.AddLocation(LocationType.Game);
         }
 
-        public static void SendMessage(this Gamer self, IActorLocationRequest message)
+        public static bool ChangeRoom(this Gamer self, int roomId)
+        {
+            if (self.RoomId != 0 && self.RoomId != roomId)
+            {
+                self.DomainScene().GetComponent<GameRoomComponent>().GetRoom(self.RoomId).Players.Remove(self.PlayerId);
+            }
+
+            if (!self.DomainScene().GetComponent<GameRoomComponent>().GetRoom(self.RoomId).AddPlayer(self.PlayerId))
+            {
+                return false;
+            }
+
+            self.RoomId = roomId;
+            return true;
+
+        }
+
+        public static void SendMessage(this Gamer self, IActorLocationMessage message)
         {
             ActorLocationSenderComponent.Instance.Get(LocationType.Player).Send(self.GetAccountId(), message);
         }
@@ -43,7 +60,18 @@ namespace ET
             {
                 id = account.Id;
             }
+
             return id;
+        }
+
+        public static void Ready(this Gamer self)
+        {
+            self.Status = self.Status switch
+            {
+                PlayerStatus.Ready => PlayerStatus.None,
+                PlayerStatus.None => PlayerStatus.Ready,
+                _ => self.Status
+            };
         }
 
         public static GamerInfo ToInfo(this Gamer self)
