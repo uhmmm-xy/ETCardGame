@@ -384,7 +384,7 @@ message M2C_RoomInfo // IActorLocationResponse
 	RoomInfo Info = 4;
 }
 
-message G2M_UpdateRoom // IActorLocationMessage
+message M2C_UpdateRoom // IActorLocationMessage
 {
     int32 RpcId = 1;
 }
@@ -400,4 +400,10 @@ message M2C_GamerReady // IActorLocationResponse
 	int32 RpcId = 1;
 	int32 Error = 2;
 	string Message = 3;
+}
+
+message M2C_DealCard // IActorLocationMessage
+{
+	int32 RpcId = 1;
+	repeated Card = 2;
 }
