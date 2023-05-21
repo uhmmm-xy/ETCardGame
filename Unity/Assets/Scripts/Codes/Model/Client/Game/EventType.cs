@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace ET.EventType
 {
     public struct EnterRoom
@@ -7,5 +9,10 @@ namespace ET.EventType
 
     public struct UpdateRoom
     {
+    }
+
+    public struct DealCard
+    {
+        public List<CardInfo> Cards;
     }
 }

@@ -13,17 +13,21 @@ namespace ET
             }
         }
         
-        public static Round CreateRound(this RoundComponent self, List<Card> cards, List<int> players, int startIndex, int gameType)
+        public static void CreateRound(this RoundComponent self, List<Card> cards, List<int> players, int startIndex, int gameType)
         {
             Round round = self.AddChild<Round, List<Card>, List<int>, int, int>(cards, players, startIndex, gameType);
             self.Rounds.Add(round);
             self.RoundIndex++;
-            return round;
         }
 
         public static void RoundOver(this RoundComponent self)
         {
-            self.GetParent<GameRoom>().NextRound();
+            // self.GetParent<GameRoom>().NextRound();
+        }
+
+        public static void Start(this RoundComponent self)
+        {
+            self.Rounds[self.RoundIndex].DealCard();
         }
     }
 }

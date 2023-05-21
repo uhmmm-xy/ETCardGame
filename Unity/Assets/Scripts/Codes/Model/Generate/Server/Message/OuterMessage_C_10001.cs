@@ -800,9 +800,9 @@ namespace ET
 
 	}
 
-	[Message(OuterMessage.G2M_UpdateRoom)]
+	[Message(OuterMessage.M2C_UpdateRoom)]
 	[ProtoContract]
-	public partial class G2M_UpdateRoom: ProtoObject, IActorLocationMessage
+	public partial class M2C_UpdateRoom: ProtoObject, IActorLocationMessage
 	{
 		[ProtoMember(1)]
 		public int RpcId { get; set; }
@@ -831,6 +831,30 @@ namespace ET
 
 		[ProtoMember(3)]
 		public string Message { get; set; }
+
+	}
+
+	[Message(OuterMessage.M2C_DealCard)]
+	[ProtoContract]
+	public partial class M2C_DealCard: ProtoObject, IActorLocationMessage
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public List<CardInfo> Cards { get; set; }
+
+	}
+
+	[Message(OuterMessage.M2C_MoCard)]
+	[ProtoContract]
+	public partial class M2C_MoCard: ProtoObject, IActorLocationMessage
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public CardInfo Card { get; set; }
 
 	}
 
@@ -888,8 +912,10 @@ namespace ET
 		 public const ushort RoomInfo = 10051;
 		 public const ushort C2M_RoomInfo = 10052;
 		 public const ushort M2C_RoomInfo = 10053;
-		 public const ushort G2M_UpdateRoom = 10054;
+		 public const ushort M2C_UpdateRoom = 10054;
 		 public const ushort C2M_GamerReady = 10055;
 		 public const ushort M2C_GamerReady = 10056;
+		 public const ushort M2C_DealCard = 10057;
+		 public const ushort M2C_MoCard = 10058;
 	}
 }

@@ -3,12 +3,12 @@ using System.Linq;
 
 namespace ET
 {
-    [FriendOf(typeof (Round))]
-    [FriendOf(typeof (Card))]
-    [FriendOf(typeof (Gamer))]
+    [FriendOf(typeof(Round))]
+    [FriendOf(typeof(Card))]
+    [FriendOfAttribute(typeof(ET.Gamer))]
     public static class RoundSystem
     {
-        public class RoundAwakeSystem: AwakeSystem<Round, List<Card>, List<int>, int, int>
+        public class RoundAwakeSystem : AwakeSystem<Round, List<Card>, List<int>, int, int>
         {
             protected override void Awake(Round self, List<Card> cards, List<int> players, int startIndex, int gameType)
             {
@@ -34,10 +34,11 @@ namespace ET
 
         public static void SendCardToPlayer(this Round self, int playerid)
         {
+            Gamer gamer = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(playerid);
             switch (self.GameType)
             {
                 case GameType.HangZhouMahjong:
-                    //self.GetComponent<HangZhouMahjong>().DealCard(playerid);
+                    self.GetComponent<HangZhouMahjong>().DealCard(gamer);
                     break;
             }
         }
@@ -47,21 +48,20 @@ namespace ET
             switch (self.GameType)
             {
                 case GameType.HangZhouMahjong:
-                    //self.GetComponent<HangZhouMahjong>().RoundStart();
+                    self.GetComponent<HangZhouMahjong>().RoundStart();
                     break;
             }
         }
 
-        public static bool IsNowPlayer(this Round self,Gamer player)
+        public static bool IsNowPlayer(this Round self, int player)
         {
-            if (player.Id == self.Players[self.PlayerIndex])
+            if (player == self.Players[self.PlayerIndex])
             {
                 return true;
             }
-
             return false;
         }
-        
+
         public static bool IsOperate(this Round self)
         {
             return self.Status == RoundStatus.WaitOperate;
@@ -72,7 +72,7 @@ namespace ET
             switch (self.GameType)
             {
                 case GameType.HangZhouMahjong:
-                    //self.GetComponent<HangZhouMahjong>().NextRound();
+                    // self.GetComponent<HangZhouMahjong>().NextRound();
                     break;
             }
         }
@@ -114,7 +114,7 @@ namespace ET
             Gamer player = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(playerId);
             List<int> operate = new List<int>();
             Card nowOut = self.OutCards.First();
-            foreach ((Card card,int type) in player.Operate)
+            foreach ((Card card, int type) in player.Operate)
             {
                 if (card.CardValue == nowOut.CardValue && card.CardType == nowOut.CardType)
                 {
@@ -126,7 +126,7 @@ namespace ET
 
             if (ret)
             {
-                //player.SendMessage(new M2C_OperateCard() { OperateType = operate });
+                // player.SendMessage(new M2C_OperateCard() { OperateType = operate });
                 return;
             }
             self.Status = RoundStatus.Next;

@@ -21,7 +21,7 @@ namespace ET
             Scene game = unit.DomainScene();
             GameRoom gameRoom = game.GetComponent<GameRoomComponent>().GetRoom(request.RoomId);
 
-            response.Info = gameRoom.ToInfo();
+            response.Info = ProtoHelper.ToInfo(gameRoom);
         }
     }
 }

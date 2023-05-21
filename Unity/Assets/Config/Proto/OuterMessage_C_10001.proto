@@ -405,5 +405,11 @@ message M2C_GamerReady // IActorLocationResponse
 message M2C_DealCard // IActorLocationMessage
 {
 	int32 RpcId = 1;
-	repeated Card = 2;
+	repeated CardInfo Cards = 2;
+}
+
+message M2C_MoCard // IActorLocationMessage
+{
+	int32 RpcId = 1;
+	CardInfo Card = 2;
 }

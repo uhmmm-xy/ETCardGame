@@ -1,10 +1,12 @@
-﻿using ET.Server;
+﻿using System.Collections.Generic;
+using ET.Server;
 
 namespace ET
 {
     [FriendOf(typeof(Gamer))]
     [FriendOf(typeof(User))]
     [FriendOf(typeof(GameRoom))]
+    [FriendOf(typeof(Card))]
     public static class GamerSystem
     {
         public class GamePlayerAwakeSystem : AwakeSystem<Gamer, int>
@@ -31,7 +33,7 @@ namespace ET
                 self.DomainScene().GetComponent<GameRoomComponent>().GetRoom(self.RoomId).Players.Remove(self.PlayerId);
             }
 
-            if (!self.DomainScene().GetComponent<GameRoomComponent>().GetRoom(self.RoomId).AddPlayer(self.PlayerId))
+            if (!self.DomainScene().GetComponent<GameRoomComponent>().GetRoom(roomId).AddPlayer(self.PlayerId))
             {
                 return false;
             }
@@ -72,21 +74,6 @@ namespace ET
                 PlayerStatus.None => PlayerStatus.Ready,
                 _ => self.Status
             };
-        }
-
-        public static GamerInfo ToInfo(this Gamer self)
-        {
-            GamerInfo info = new();
-            info.PlayerId = self.PlayerId;
-            User user = self.GetComponent<Account>().GetComponent<User>();
-            info.Hander = user.HeaderImg;
-            info.Name = "";
-            info.Status = self.Status;
-            info.Score = self.Score;
-            info.OpenDeal = CardHelper.CardToCardInfo(self.OpenDeal);
-            info.OutCards = CardHelper.CardToCardInfo(self.OutCards);
-            info.HandCards = CardHelper.CardToCardInfo(self.HandCards);
-            return info;
         }
     }
 }

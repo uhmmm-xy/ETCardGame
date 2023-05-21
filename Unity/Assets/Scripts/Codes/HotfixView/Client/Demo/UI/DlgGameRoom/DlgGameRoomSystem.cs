@@ -77,5 +77,33 @@ namespace ET.Client
         {
             await GameRoomHelper.GamerReady(self.ClientScene());
         }
+        
+        public static void SetCard(this DlgGameRoom self, List<CardInfo> cards)
+        {
+            self.ItemCards.Clear();
+            self.AddUIScrollItems(ref self.ItemCards, cards.Count);
+            self.Cards = cards;
+            self.View.ELoopScrollList_CardListLoopHorizontalScrollRect.SetVisible(true, cards.Count);
+        }
+        
+        public static void OnLoopListItemRefreshHandler(this DlgGameRoom self, Transform transform, int index)
+        {
+            Scroll_Item_Card itemCard = self.ItemCards[index].BindTrans(transform);
+            itemCard.ELabel_CardValueText.text = "\r\n\r\n" + self.Cards[index].ToEnity().GetValueName() + "\r\n\r\n" + self.Cards[index].ToEnity().GetTypeName();
+            itemCard.EButton_CardButton.AddListenerAsync<CardInfo>(self.SelectCardEvent, self.Cards[index]);
+        }
+        
+        public static async ETTask SelectCardEvent(this DlgGameRoom self, CardInfo card)
+        {
+            if (card == self.SelectedCard)
+            {
+                //await GameRoomHelper.OutCard(self.ClientScene(), card);
+                Log.Info("出牌" + card.ToEnity().GetTypeName() + "---" + card.ToEnity().GetValueName());
+                return;
+            }
+
+            self.SelectedCard = card;
+            await ETTask.CompletedTask;
+        }
     }
 }

@@ -36,6 +36,7 @@ namespace ET.Client
                 return;
             }
             await EventSystem.Instance.PublishAsync(client, new EventType.UpdateRoom());
+            client.GetComponent<ObjectWait>().Notify(new Wait_GameStart());
         }
 
         public static async ETTask<RoomInfo> GetRoomInfo(Scene client, int roomId)

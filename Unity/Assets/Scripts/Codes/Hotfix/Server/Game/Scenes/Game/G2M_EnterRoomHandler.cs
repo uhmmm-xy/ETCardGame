@@ -47,7 +47,7 @@ namespace ET
                     return;
                 }
 
-                room.SendOtherPlayer(gamer.PlayerId, new G2M_UpdateRoom());
+                RoomSendHelper.SendOtherPlayer(room,gamer.PlayerId, new M2C_UpdateRoom());
 
                 response.RoomId = room.RoomId;
             }

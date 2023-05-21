@@ -10,7 +10,7 @@ namespace ET
             long sessionId = 0;
             if ((sessionId = scene.GetComponent<AccountSessionComponent>().Get(request.PlayerId)) != 0)
             {
-                MessageHelper.SendActor(sessionId, new A2C_Disconnent());
+                ET.Server.MessageHelper.SendActor(sessionId, new A2C_Disconnent());
             }
 
             StartSceneConfig startSceneConfig = GateAddressHelper.GetGate(scene.DomainZone());

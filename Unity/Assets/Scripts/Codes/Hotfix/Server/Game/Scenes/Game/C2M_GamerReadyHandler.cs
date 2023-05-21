@@ -14,12 +14,14 @@ namespace ET
             Gamer gamer = unit.GetParent<Gamer>();
 
             GameRoom room = unit.DomainScene().GetComponent<GameRoomComponent>().GetRoom(gamer.RoomId);
-
+            
+            gamer.Ready();
+            
             room.PlayerReady(gamer.PlayerId);
 
             if (room.RoomStatus == RoomStatus.Readying)
             {
-                room.SendOtherPlayer(gamer.PlayerId, new G2M_UpdateRoom());
+                RoomSendHelper.SendOtherPlayer(room,gamer.PlayerId, new M2C_UpdateRoom());
             }
             
         }

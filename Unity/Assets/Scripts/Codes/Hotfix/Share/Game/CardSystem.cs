@@ -40,5 +40,13 @@ namespace ET
             info.Value = self.CardValue;
             return info;
         }
+
+        public static Card ToEnity(this CardInfo self)
+        {
+            Card card = new Card();
+            card.CardValue = self.Value;
+            card.CardType = self.Type;
+            return card;
+        }
     }
 }
