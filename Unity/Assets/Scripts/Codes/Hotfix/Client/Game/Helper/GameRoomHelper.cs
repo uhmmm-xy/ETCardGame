@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace ET.Client
 {
     public static class GameRoomHelper
@@ -44,6 +46,13 @@ namespace ET.Client
             M2C_RoomInfo m2CRoomInfo =
                     await client.GetComponent<SessionComponent>().Session.Call(new C2M_RoomInfo() { RoomId = roomId }) as M2C_RoomInfo;
             return m2CRoomInfo.Info;
+        }
+
+        public static async ETTask<List<CardInfo>> OutCard(Scene client, CardInfo card)
+        {
+            M2C_OutCard m2COutCard =
+                    await client.GetComponent<SessionComponent>().Session.Call(new C2M_OutCard() {  Card = card }) as M2C_OutCard;
+            return m2COutCard.HandCard;
         }
     }
 }

@@ -40,6 +40,23 @@ namespace ET
                 new SendPlayerMessage() { Player = player, Message = new M2C_MoCard() { Card = card.ToInfo() } });
         }
 
+        public static void NextRound(this HangZhouMahjong self)
+        {
+            Round round = self.GetParent<Round>();
+            round.PlayerIndex++;
+            if (round.PlayerIndex >= round.Players.Count)
+            {
+                round.PlayerIndex = 0;
+            }
+
+            Card card = round.LibCards.First();
+            round.LibCards.Remove(card);
+            Gamer player = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(round.Players[round.PlayerIndex]);
+            player.HandCards.Add(card);
+            EventSystem.Instance.Publish(self.DomainScene(),
+                new SendPlayerMessage() { Player = player, Message = new M2C_MoCard() { Card = card.ToInfo() } });
+        }
+
         static void CheckPlayerOperate(this HangZhouMahjong self, Gamer gamer)
         {
             GameRoom room = self.DomainScene().GetComponent<GameRoomComponent>().GetRoom(gamer.RoomId);
@@ -65,7 +82,7 @@ namespace ET
                 if (tem.CardValue == card.CardValue)
                 {
                     List<Card> select = allCard.FindAll(item => item.CardValue.Equals(tem.CardValue) && item.CardType.Equals(tem.CardType));
-                    AddOperateCard(gamer,select, OperateType.MahjongPeng);
+                    AddOperateCard(gamer, select, OperateType.MahjongPeng);
                     tem = card;
                     continue;
                 }
@@ -78,10 +95,10 @@ namespace ET
                 tem = card;
             }
         }
-        
+
         public static void AddOperateCard(Gamer self, List<Card> cards, int type)
         {
-            cards.ForEach(item => { AddOperateCardEach(self,item, type); });
+            cards.ForEach(item => { AddOperateCardEach(self, item, type); });
         }
 
         private static void AddOperateCardEach(Gamer self, Card card, int type)
@@ -92,6 +109,7 @@ namespace ET
                 {
                     return;
                 }
+
                 self.Operate[card] += type;
                 return;
             }
@@ -124,14 +142,14 @@ namespace ET
                 {
                     List<Card> select = allCard.FindAll(item =>
                             item.CardType == inCard.CardType && (item.CardValue == inCard.CardValue + 1 || item.CardValue == outCard.CardValue - 1));
-                    AddOperateCard(player,select, OperateType.MahjongChi);
+                    AddOperateCard(player, select, OperateType.MahjongChi);
                 }
 
                 if (inCard.CardValue - outCard.CardValue == 2)
                 {
                     List<Card> select = allCard.FindAll(item =>
                             item.CardType == inCard.CardType && item.CardValue == inCard.CardValue - 1);
-                    AddOperateCard(player,select, OperateType.MahjongChi);
+                    AddOperateCard(player, select, OperateType.MahjongChi);
                 }
             }
             else
@@ -141,14 +159,14 @@ namespace ET
                     List<Card> select = allCard.FindAll(item =>
                             item.CardType == inCard.CardType &&
                             (item.CardValue == (outCard.CardValue + 1) || item.CardValue == (inCard.CardValue - 1)));
-                    AddOperateCard(player,select, OperateType.MahjongChi);
+                    AddOperateCard(player, select, OperateType.MahjongChi);
                 }
 
                 if (outCard.CardValue - inCard.CardValue == 2)
                 {
                     List<Card> select = allCard.FindAll(item =>
                             item.CardType == inCard.CardType && item.CardValue == outCard.CardValue - 1);
-                    AddOperateCard(player,select, OperateType.MahjongChi);
+                    AddOperateCard(player, select, OperateType.MahjongChi);
                 }
             }
         }

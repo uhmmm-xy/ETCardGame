@@ -87,7 +87,7 @@ namespace ET
 
         public static Round GetNowRound(this GameRoom self)
         {
-            return self.GetComponent<RoundComponent>().GetChild<Round>(self.RoundIndex);
+            return self.GetComponent<RoundComponent>().GetNowRound();
         }
 
         public static bool AddPlayer(this GameRoom self, int playerId)

@@ -34,7 +34,7 @@ namespace ET
         private static void CardTypeEach(this CardComponent self, int CardId)
         {
             CardConfig cardConfig = CardConfigCategory.Instance.Get(CardId);
-            for (int i = cardConfig.MinValue; i <= cardConfig.MaxValue; i++)
+            for (int i = cardConfig.MinValue; i < cardConfig.MaxValue; i++)
             {
                 self.CardCreated(i, cardConfig.Id, cardConfig.Count);
             }

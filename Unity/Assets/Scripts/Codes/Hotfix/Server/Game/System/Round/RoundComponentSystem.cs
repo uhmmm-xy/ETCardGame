@@ -29,5 +29,10 @@ namespace ET
         {
             self.Rounds[self.RoundIndex].DealCard();
         }
+
+        public static Round GetNowRound(this RoundComponent self)
+        {
+            return self.Rounds[self.RoundIndex];
+        }
     }
 }

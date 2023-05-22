@@ -28,7 +28,7 @@ namespace ET
                 self.Glod = 100;
                 self.Jewel = 100;
                 self.Status = (int)UserStatus.None;
-                self.HeaderImg = "";
+                self.HandImage = "";
                 self.RoomNumber = 0;
                 await DBManagerComponent.Instance.GetZoneDB(1).Save(self);    
             }
@@ -40,7 +40,7 @@ namespace ET
             if (list != null & list.Count > 0)
             {
                 User user = list.First();
-                self.HeaderImg = user.HeaderImg;
+                self.HandImage = user.HandImage;
                 self.Glod = user.Glod;
                 self.Gender = user.Gender;
                 self.Jewel = user.Jewel;
@@ -58,7 +58,7 @@ namespace ET
             UserInfo info = new ();
             info.PlayerId = self.PlayerId;
             info.Gender = self.Gender;
-            info.HeaderImg = self.HeaderImg;
+            info.HeaderImg = self.HandImage;
             info.Glod = self.Glod;
             info.Jewel = self.Jewel;
             info.Status = self.Status;

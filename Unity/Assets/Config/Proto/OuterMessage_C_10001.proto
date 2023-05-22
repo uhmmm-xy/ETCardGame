@@ -345,12 +345,13 @@ message GamerInfo
 {
 	int32 PlayerId = 1;
 	repeated CardInfo OutCards = 2;
-	string Hander = 3;
+	string HandImage = 3;
 	string Name = 4;
 	repeated CardInfo OpenDeal = 5;
 	int32 Score = 6;
 	int32 Status = 7;
 	repeated CardInfo HandCards = 8;
+	int32 Operate = 9;
 }
 
 message RoundInfo
@@ -412,4 +413,37 @@ message M2C_MoCard // IActorLocationMessage
 {
 	int32 RpcId = 1;
 	CardInfo Card = 2;
+}
+
+message OutCardMap
+{
+	int32 PlayerId = 1;
+	repeated CardInfo Outs = 2;
+}
+
+//ResponseType M2C_OutCard
+message C2M_OutCard // IActorLocationRequest
+{
+	int32 RpcId = 1;
+	CardInfo Card = 2;
+}
+
+message M2C_OutCard // IActorLocationResponse
+{
+	int32 RpcId = 1;
+	int32 Error = 2;
+	string Message = 3;
+	repeated CardInfo HandCard = 4;
+}
+
+message M2C_AllSendOutCard // IActorLocationMessage
+{
+	int32 RpcId = 1;
+	repeated OutCardMap OutMap = 2;
+}
+
+message M2C_OperateCard // IActorLocationMessage
+{
+	int32 RpcId = 1;
+	int32 OperateType = 2;
 }

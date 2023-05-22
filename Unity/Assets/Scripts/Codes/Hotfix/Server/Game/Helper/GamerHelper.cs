@@ -23,7 +23,7 @@ namespace ET
             GamerInfo info = new();
             info.PlayerId = self.PlayerId;
             User user = self.GetComponent<Account>().GetComponent<User>();
-            info.Hander = user.HeaderImg;
+            info.HandImage = user.HandImage;
             info.Name = "";
             info.Status = self.Status;
             info.Score = self.Score;

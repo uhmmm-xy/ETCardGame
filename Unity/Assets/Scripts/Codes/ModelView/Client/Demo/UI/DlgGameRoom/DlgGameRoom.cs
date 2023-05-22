@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine.UI;
 
 namespace ET.Client
 {
@@ -15,6 +16,10 @@ namespace ET.Client
 		public Dictionary<int, Scroll_Item_Card> ItemCards = new Dictionary<int, Scroll_Item_Card>();
 
 		public CardInfo SelectedCard;
-		
+
+		public int SelectIndex = -1;
+
+		public Dictionary<int, Text> PlayerOutText = new Dictionary<int, Text>();
+
 	}
 }

@@ -43,13 +43,18 @@ namespace ET.Client
         public static async ETTask CreateRoom(this DlgLobby self)
         {
             await GameRoomHelper.CreatedRoom(self.ClientScene());
-            //await EnterMapHelper.EnterMapAsync(self.ClientScene());
-            //self.ClientScene().GetComponent<UIComponent>().HideWindow(WindowID.WindowID_Lobby);
         }
 
         public static async ETTask PushRoom(this DlgLobby self)
         {
+            if (string.IsNullOrEmpty(self.View.E_RoomIdInputField.text))
+            {
+                Log.Info("没有输入房间号");
+                return;
+            }
+            
             int roomId = int.Parse(self.View.E_RoomIdInputField.text);
+            
             await GameRoomHelper.EnterRoom(self.ClientScene(),roomId);
         }
 

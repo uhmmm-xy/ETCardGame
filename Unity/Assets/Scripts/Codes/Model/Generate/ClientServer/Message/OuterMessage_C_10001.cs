@@ -714,7 +714,7 @@ namespace ET
 		public List<CardInfo> OutCards { get; set; }
 
 		[ProtoMember(3)]
-		public string Hander { get; set; }
+		public string HandImage { get; set; }
 
 		[ProtoMember(4)]
 		public string Name { get; set; }
@@ -730,6 +730,9 @@ namespace ET
 
 		[ProtoMember(8)]
 		public List<CardInfo> HandCards { get; set; }
+
+		[ProtoMember(9)]
+		public int Operate { get; set; }
 
 	}
 
@@ -858,6 +861,73 @@ namespace ET
 
 	}
 
+	[Message(OuterMessage.OutCardMap)]
+	[ProtoContract]
+	public partial class OutCardMap: ProtoObject
+	{
+		[ProtoMember(1)]
+		public int PlayerId { get; set; }
+
+		[ProtoMember(2)]
+		public List<CardInfo> Outs { get; set; }
+
+	}
+
+	[ResponseType(nameof(M2C_OutCard))]
+	[Message(OuterMessage.C2M_OutCard)]
+	[ProtoContract]
+	public partial class C2M_OutCard: ProtoObject, IActorLocationRequest
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public CardInfo Card { get; set; }
+
+	}
+
+	[Message(OuterMessage.M2C_OutCard)]
+	[ProtoContract]
+	public partial class M2C_OutCard: ProtoObject, IActorLocationResponse
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int Error { get; set; }
+
+		[ProtoMember(3)]
+		public string Message { get; set; }
+
+		[ProtoMember(4)]
+		public List<CardInfo> HandCard { get; set; }
+
+	}
+
+	[Message(OuterMessage.M2C_AllSendOutCard)]
+	[ProtoContract]
+	public partial class M2C_AllSendOutCard: ProtoObject, IActorLocationMessage
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public List<OutCardMap> OutMap { get; set; }
+
+	}
+
+	[Message(OuterMessage.M2C_OperateCard)]
+	[ProtoContract]
+	public partial class M2C_OperateCard: ProtoObject, IActorLocationMessage
+	{
+		[ProtoMember(1)]
+		public int RpcId { get; set; }
+
+		[ProtoMember(2)]
+		public int OperateType { get; set; }
+
+	}
+
 	public static class OuterMessage
 	{
 		 public const ushort HttpGetRouterResponse = 10002;
@@ -917,5 +987,10 @@ namespace ET
 		 public const ushort M2C_GamerReady = 10056;
 		 public const ushort M2C_DealCard = 10057;
 		 public const ushort M2C_MoCard = 10058;
+		 public const ushort OutCardMap = 10059;
+		 public const ushort C2M_OutCard = 10060;
+		 public const ushort M2C_OutCard = 10061;
+		 public const ushort M2C_AllSendOutCard = 10062;
+		 public const ushort M2C_OperateCard = 10063;
 	}
 }

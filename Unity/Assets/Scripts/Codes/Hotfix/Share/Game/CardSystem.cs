@@ -14,7 +14,7 @@ namespace ET
                 self.CardValue = value;
             }
         }
-        
+
         public static List<Card> SortCard(this List<Card> self)
         {
             self = self.OrderBy(obj => obj.CardType).ThenBy(obj => obj.CardValue).ToList();

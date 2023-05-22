@@ -7,7 +7,7 @@
         public int Jewel;
         public int Glod;
         public int Gender;
-        public string HeaderImg;
+        public string HandImage;
         public int Status;
         public int RoomNumber;
     }

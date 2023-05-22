@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ET.Server.EventType;
 
 namespace ET
 {
-    [FriendOf(typeof(Round))]
-    [FriendOf(typeof(Card))]
-    [FriendOfAttribute(typeof(ET.Gamer))]
+    [FriendOf(typeof (Round))]
+    [FriendOf(typeof (Card))]
+    [FriendOf(typeof (Gamer))]
     public static class RoundSystem
     {
-        public class RoundAwakeSystem : AwakeSystem<Round, List<Card>, List<int>, int, int>
+        public class RoundAwakeSystem: AwakeSystem<Round, List<Card>, List<int>, int, int>
         {
             protected override void Awake(Round self, List<Card> cards, List<int> players, int startIndex, int gameType)
             {
@@ -59,6 +60,7 @@ namespace ET
             {
                 return true;
             }
+
             return false;
         }
 
@@ -72,7 +74,7 @@ namespace ET
             switch (self.GameType)
             {
                 case GameType.HangZhouMahjong:
-                    // self.GetComponent<HangZhouMahjong>().NextRound();
+                    self.GetComponent<HangZhouMahjong>().NextRound();
                     break;
             }
         }
@@ -91,6 +93,7 @@ namespace ET
         {
             self.OutCards.Insert(0, card);
             self.Players.ForEach(self.AllSendOutCardMessage);
+            self.CheckOperate();
             if (self.Status == RoundStatus.Next)
             {
                 self.NextRound();
@@ -99,37 +102,69 @@ namespace ET
 
         public static void AllSendOutCardMessage(this Round self, int playerid)
         {
+            Gamer player = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(playerid);
+            EventSystem.Instance.Publish(self.DomainScene(),
+                new SendPlayerMessage()
+                {
+                    Player = player,
+                    Message = new M2C_AllSendOutCard() { OutMap = GameRoomHelper.GetGamerAllOutMap(self.DomainScene(), self.Players) }
+                });
             // self.DomainScene().GetComponent<GamerComponent>().GetPlayer(playerid)
             //         .SendMessage(new M2C_AllOutCard() { Cards = self.OutCards });
         }
 
         public static void CheckOperate(this Round self)
         {
-            self.Players.ForEach(self.CheckPlayerOperate);
+            foreach (int player in self.Players.Where(player => player != self.Players[self.PlayerIndex]))
+            {
+                self.CheckPlayerOperate(player);
+            }
         }
 
         public static void CheckPlayerOperate(this Round self, int playerId)
         {
             bool ret = false;
             Gamer player = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(playerId);
-            List<int> operate = new List<int>();
+            int operate = 0;
             Card nowOut = self.OutCards.First();
             foreach ((Card card, int type) in player.Operate)
             {
                 if (card.CardValue == nowOut.CardValue && card.CardType == nowOut.CardType)
                 {
-                    operate.Add(type);
+                    operate = self.CheckGamerChiCard(type, player.PlayerId);
                     ret = true;
                     self.Status = RoundStatus.WaitOperate;
                 }
             }
 
-            if (ret)
+            if (ret && operate != OperateType.MahjongNone)
             {
-                // player.SendMessage(new M2C_OperateCard() { OperateType = operate });
+                EventSystem.Instance.Publish(self.DomainScene(),
+                    new SendPlayerMessage() { Player = player, Message = new M2C_OperateCard() { OperateType = operate } });
                 return;
             }
+
             self.Status = RoundStatus.Next;
+        }
+
+        public static int CheckGamerChiCard(this Round self, int type, int playerId)
+        {
+            if (self.Players.IndexOf(playerId) == self.PlayerIndex + 1)
+            {
+                return type;
+            }
+            
+            if (self.Players.IndexOf(playerId) == self.PlayerIndex)
+            {
+                return OperateType.MahjongNone;
+            }
+
+            if (type > OperateType.MahjongPeng)
+            {
+                return type - OperateType.MahjongChi;
+            }
+
+            return OperateType.MahjongNone;
         }
     }
 }

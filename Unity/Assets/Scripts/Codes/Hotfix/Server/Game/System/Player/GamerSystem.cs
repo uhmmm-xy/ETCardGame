@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ET.Server;
 
 namespace ET
@@ -46,6 +47,20 @@ namespace ET
         public static void SendMessage(this Gamer self, IActorLocationMessage message)
         {
             ActorLocationSenderComponent.Instance.Get(LocationType.Player).Send(self.GetAccountId(), message);
+        }
+        
+        public static Card OutCard(this Gamer self, Card card)
+        {
+            Card outCard = self.HandCards.FirstOrDefault(incard => incard.CardType == card.CardType && incard.CardValue == card.CardValue);
+            if (outCard is null)
+            {
+                return null;
+            }
+
+            self.HandCards.Remove(outCard);
+            self.OutCards.Add(outCard);
+            self.HandCards = self.HandCards.SortCard();
+            return outCard;
         }
 
         public static async ETTask<IActorResponse> CallMessage(this Gamer self, IActorRequest message)

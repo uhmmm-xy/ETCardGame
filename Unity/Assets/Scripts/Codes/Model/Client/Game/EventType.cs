@@ -20,4 +20,14 @@ namespace ET.EventType
     {
         public CardInfo Card;
     }
+
+    public struct ChangeAllOutCard
+    {
+        public List<OutCardMap> OutCardMaps;
+    }
+
+    public struct GamerOperate
+    {
+        public int Type;
+    }
 }

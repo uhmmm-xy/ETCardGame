@@ -8,6 +8,7 @@ namespace ET.Client
 	{
 		public long DataId {get;set;}
 		private bool isCacheNode = false;
+		public CardInfo Card;
 		public void SetCacheMode(bool isCache)
 		{
 			this.isCacheNode = isCache;
