@@ -1,4 +1,4 @@
-﻿namespace ET.Game.Scene.Game
+﻿namespace ET.Client
 {
     [MessageHandler(SceneType.Client)]
     public class M2C_UpdateRoomHandler: AMHandler<M2C_UpdateRoom>

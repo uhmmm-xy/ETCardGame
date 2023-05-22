@@ -15,4 +15,9 @@ namespace ET.EventType
     {
         public List<CardInfo> Cards;
     }
+
+    public struct MoCard
+    {
+        public CardInfo Card;
+    }
 }

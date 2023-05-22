@@ -27,7 +27,7 @@ namespace ET.Client
             self.View.ELabel_PlayerReightText.text = "";
             self.View.ELabel_PlayerUpText.text = "";
             self.View.ELabel_PlayerDownText.text = "";
-            
+
             RoomInfo info = await GameRoomHelper.GetRoomInfo(self.ClientScene(), self.RoomId);
             Player My = self.DomainScene().GetComponent<Player>();
 
@@ -53,7 +53,6 @@ namespace ET.Client
             index = self.NextPlayer(index, playerids.Count);
             if (playerids.Count > 3) self.View.ELabel_PlayerLeftText.text = playerids[index];
         }
-        
 
         static int NextPlayer(this DlgGameRoom self, int index, int count)
         {
@@ -77,7 +76,7 @@ namespace ET.Client
         {
             await GameRoomHelper.GamerReady(self.ClientScene());
         }
-        
+
         public static void SetCard(this DlgGameRoom self, List<CardInfo> cards)
         {
             self.ItemCards.Clear();
@@ -85,14 +84,15 @@ namespace ET.Client
             self.Cards = cards;
             self.View.ELoopScrollList_CardListLoopHorizontalScrollRect.SetVisible(true, cards.Count);
         }
-        
+
         public static void OnLoopListItemRefreshHandler(this DlgGameRoom self, Transform transform, int index)
         {
             Scroll_Item_Card itemCard = self.ItemCards[index].BindTrans(transform);
-            itemCard.ELabel_CardValueText.text = "\r\n\r\n" + self.Cards[index].ToEnity().GetValueName() + "\r\n\r\n" + self.Cards[index].ToEnity().GetTypeName();
+            itemCard.ELabel_CardValueText.text =
+                    "\r\n\r\n" + self.Cards[index].ToEnity().GetValueName() + "\r\n\r\n" + self.Cards[index].ToEnity().GetTypeName();
             itemCard.EButton_CardButton.AddListenerAsync<CardInfo>(self.SelectCardEvent, self.Cards[index]);
         }
-        
+
         public static async ETTask SelectCardEvent(this DlgGameRoom self, CardInfo card)
         {
             if (card == self.SelectedCard)
@@ -104,6 +104,14 @@ namespace ET.Client
 
             self.SelectedCard = card;
             await ETTask.CompletedTask;
+        }
+
+        public static void AddCard(this DlgGameRoom self, CardInfo card)
+        {
+            self.RemoveUIScrollItems(ref self.ItemCards);
+            self.Cards.Add(card);
+            self.AddUIScrollItems(ref self.ItemCards, self.Cards.Count);
+            self.View.ELoopScrollList_CardListLoopHorizontalScrollRect.SetVisible(true, self.Cards.Count);
         }
     }
 }
