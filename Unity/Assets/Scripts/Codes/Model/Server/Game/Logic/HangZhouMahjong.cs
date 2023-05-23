@@ -3,7 +3,8 @@
     [ComponentOf(typeof(Round))]
     public class HangZhouMahjong : Entity,IAwake
     {
-        
+        public int Piao;
+        public bool Gang;
     }
 
     public partial struct CardType

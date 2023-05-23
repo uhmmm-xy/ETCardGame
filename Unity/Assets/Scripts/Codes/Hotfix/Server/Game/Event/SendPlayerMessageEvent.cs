@@ -3,12 +3,15 @@
 namespace ET
 {
     [Event(SceneType.Game)]
+    [FriendOf(typeof(Gamer))]
     public class SendPlayerMessageEvent : AEvent<SendPlayerMessage>
     {
         protected override async ETTask Run(Scene scene, SendPlayerMessage a)
         {
-            await ETTask.CompletedTask;
-            a.Player.SendMessage(a.Message);
+            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameMessageDoing, a.Player.Id))
+            {
+                a.Player.SendMessage(a.Message);
+            }
         }
     }
 }

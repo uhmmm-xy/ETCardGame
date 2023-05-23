@@ -9,16 +9,14 @@ namespace ET
     {
         public List<Card> HandCards = new ();//手牌
         public List<Card> OutCards = new();//弃牌
-        public List<Card> OpenDeal = new();
+        public Dictionary<Card,int> OpenDeal = new();
         public int Score; //分数
 
-        public Dictionary<Card, int> Operate = new();
+        public int Operate;
 
         //public List<Card> OperateCards;//可以操作的牌
 
         //public List<int> Operates; //可以操作的集合
-
-        public int OperateType; //操作类型
 
         public int Status; //玩家状态
 

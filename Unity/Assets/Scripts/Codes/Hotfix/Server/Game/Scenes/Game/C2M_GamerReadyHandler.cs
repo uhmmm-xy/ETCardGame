@@ -5,25 +5,23 @@ namespace ET
     [ActorMessageHandler(SceneType.Game)]
     [FriendOf(typeof(Gamer))]
     [FriendOf(typeof(GameRoom))]
-    public class C2M_GamerReadyHandler : AMActorLocationRpcHandler<Account, C2M_GamerReady, M2C_GamerReady>
+    public class C2M_GamerReadyHandler : AMActorLocationHandler<Account, C2M_GamerReady>
     {
-        protected override async ETTask Run(Account unit, C2M_GamerReady request, M2C_GamerReady response)
+
+        protected override async ETTask Run(Account entity, C2M_GamerReady message)
         {
-            await ETTask.CompletedTask;
+            Gamer gamer = entity.GetParent<Gamer>();
 
-            Gamer gamer = unit.GetParent<Gamer>();
+            GameRoom room = entity.DomainScene().GetComponent<GameRoomComponent>().GetRoom(gamer.RoomId);
 
-            GameRoom room = unit.DomainScene().GetComponent<GameRoomComponent>().GetRoom(gamer.RoomId);
-            
-            gamer.Ready();
-            
-            room.PlayerReady(gamer.PlayerId);
-
-            if (room.RoomStatus == RoomStatus.Readying)
+            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameMessageDoing, gamer.PlayerId) )
             {
-                RoomSendHelper.SendOtherPlayer(room,gamer.PlayerId, new M2C_UpdateRoom());
-            }
+                gamer.Ready();
             
+                room.PlayerReady(gamer.PlayerId);
+
+                RoomSendHelper.SendRoomPlayer(room, new M2C_UpdateRoom());
+            }
         }
     }
 }

@@ -37,6 +37,7 @@ namespace ET.Client
                 Log.Info($"ErrorCode: {m2CGamerReady.Error} Message : {m2CGamerReady.Message}");
                 return;
             }
+
             await EventSystem.Instance.PublishAsync(client, new EventType.UpdateRoom());
             client.GetComponent<ObjectWait>().Notify(new Wait_GameStart());
         }
@@ -48,11 +49,14 @@ namespace ET.Client
             return m2CRoomInfo.Info;
         }
 
-        public static async ETTask<List<CardInfo>> OutCard(Scene client, CardInfo card)
+        public static void OutCard(Scene client, CardInfo card)
         {
-            M2C_OutCard m2COutCard =
-                    await client.GetComponent<SessionComponent>().Session.Call(new C2M_OutCard() {  Card = card }) as M2C_OutCard;
-            return m2COutCard.HandCard;
+            client.GetComponent<SessionComponent>().Session.Send(new C2M_OutCard() { Card = card });
+        }
+
+        public static void GamerOperate(Scene client, int operate, List<CardInfo> operateCards)
+        {
+            client.GetComponent<SessionComponent>().Session.Send(new C2M_GamerOperate() { Operate = operate, OperateCards = operateCards });
         }
     }
 }

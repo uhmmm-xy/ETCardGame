@@ -8,8 +8,6 @@ namespace ET
     {
         protected override async ETTask Run(Account unit, C2M_RoomInfo request, M2C_RoomInfo response)
         {
-            await ETTask.CompletedTask;
-            
             Gamer gamer = unit.GetParent<Gamer>();
             if (gamer.RoomId != request.RoomId)
             {
@@ -18,10 +16,14 @@ namespace ET
                 return;
             }
 
-            Scene game = unit.DomainScene();
-            GameRoom gameRoom = game.GetComponent<GameRoomComponent>().GetRoom(request.RoomId);
+            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameMessageDoing, gamer.PlayerId))
+            {
+                Scene game = unit.DomainScene();
+                GameRoom gameRoom = game.GetComponent<GameRoomComponent>().GetRoom(request.RoomId);
 
-            response.Info = ProtoHelper.ToInfo(gameRoom);
+                response.Info = ProtoHelper.ToInfo(gameRoom,gamer.PlayerId);
+            }
+            
         }
     }
 }

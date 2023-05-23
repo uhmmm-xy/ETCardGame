@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ET
@@ -14,6 +15,8 @@ namespace ET
                 self.CardValue = value;
             }
         }
+        
+       
 
         public static List<Card> SortCard(this List<Card> self)
         {

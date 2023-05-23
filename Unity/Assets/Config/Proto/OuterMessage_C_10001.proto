@@ -341,13 +341,19 @@ message CardInfo
 	int32 Value = 2;
 }
 
+message OpenDealMap
+{
+	int32 OpenType = 1;
+	CardInfo Card = 2;
+}
+
 message GamerInfo
 {
 	int32 PlayerId = 1;
 	repeated CardInfo OutCards = 2;
 	string HandImage = 3;
 	string Name = 4;
-	repeated CardInfo OpenDeal = 5;
+	repeated OpenDealMap OpenDeal = 5;
 	int32 Score = 6;
 	int32 Status = 7;
 	repeated CardInfo HandCards = 8;
@@ -359,7 +365,8 @@ message RoundInfo
 	int32 StartIndex = 1;
 	repeated int32 Score = 2;
 	int32 PlayerIndex = 3;
-	int32 Status = 4;	
+	int32 Status = 4;
+	repeated CardInfo OutCard = 5;
 }
 
 message RoomInfo
@@ -391,7 +398,7 @@ message M2C_UpdateRoom // IActorLocationMessage
 }
 
 //ResponseType M2C_GamerReady
-message C2M_GamerReady // IActorLocationRequest
+message C2M_GamerReady // IActorLocationMessage
 {
 	int32 RpcId = 1;
 }
@@ -403,47 +410,27 @@ message M2C_GamerReady // IActorLocationResponse
 	string Message = 3;
 }
 
-message M2C_DealCard // IActorLocationMessage
-{
-	int32 RpcId = 1;
-	repeated CardInfo Cards = 2;
-}
-
 message M2C_MoCard // IActorLocationMessage
 {
 	int32 RpcId = 1;
 	CardInfo Card = 2;
 }
 
-message OutCardMap
-{
-	int32 PlayerId = 1;
-	repeated CardInfo Outs = 2;
-}
-
-//ResponseType M2C_OutCard
-message C2M_OutCard // IActorLocationRequest
+message C2M_OutCard // IActorLocationMessage
 {
 	int32 RpcId = 1;
 	CardInfo Card = 2;
-}
-
-message M2C_OutCard // IActorLocationResponse
-{
-	int32 RpcId = 1;
-	int32 Error = 2;
-	string Message = 3;
-	repeated CardInfo HandCard = 4;
-}
-
-message M2C_AllSendOutCard // IActorLocationMessage
-{
-	int32 RpcId = 1;
-	repeated OutCardMap OutMap = 2;
 }
 
 message M2C_OperateCard // IActorLocationMessage
 {
 	int32 RpcId = 1;
 	int32 OperateType = 2;
+}
+
+message C2M_GamerOperate // IActorLocationMessage
+{
+	int32 RpcId = 1;
+	int32 Operate = 2;
+	repeated CardInfo OperateCards = 3;
 }

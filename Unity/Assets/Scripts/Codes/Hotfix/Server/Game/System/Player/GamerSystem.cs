@@ -60,6 +60,7 @@ namespace ET
             self.HandCards.Remove(outCard);
             self.OutCards.Add(outCard);
             self.HandCards = self.HandCards.SortCard();
+            self.Status = PlayerStatus.Waitting;
             return outCard;
         }
 
@@ -90,5 +91,7 @@ namespace ET
                 _ => self.Status
             };
         }
+        
+
     }
 }

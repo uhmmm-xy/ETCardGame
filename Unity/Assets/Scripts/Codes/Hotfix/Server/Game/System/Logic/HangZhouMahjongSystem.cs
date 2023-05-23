@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Linq;
 using ET.Server.EventType;
+using Unity.Mathematics;
 
 namespace ET
 {
     [FriendOf(typeof (Gamer))]
     [FriendOf(typeof (Card))]
-    [FriendOfAttribute(typeof (ET.Round))]
+    [FriendOf(typeof (Round))]
+    [FriendOf(typeof (HangZhouMahjong))]
     public static class HangZhouMahjongSystem
     {
         public class HangZhouMahjongAwakeSystem: AwakeSystem<HangZhouMahjong>
@@ -17,24 +20,28 @@ namespace ET
             }
         }
 
-        public static void DealCard(this HangZhouMahjong self, Gamer gamer)
+        public static void DealCard(this HangZhouMahjong self, int gamer)
         {
             Round round = self.GetParent<Round>();
+            Gamer player = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(gamer);
             List<Card> cards = round.LibCards.GetRange(0, 13);
             cards = cards.SortCard();
             round.LibCards.RemoveRange(0, 13);
-            gamer.HandCards = cards;
-            self.CheckPlayerOperate(gamer);
-            EventSystem.Instance.Publish(self.DomainScene(),
-                new SendPlayerMessage() { Player = gamer, Message = new M2C_DealCard() { Cards = GamerHelper.ToInfo(gamer).HandCards } });
+            player.HandCards = cards;
+            player.Status = PlayerStatus.Waitting;
         }
 
         public static void RoundStart(this HangZhouMahjong self)
         {
             Round round = self.GetParent<Round>();
+            round.Players.ForEach(self.DealCard);
             Card card = round.LibCards.First();
             round.LibCards.Remove(card);
             Gamer player = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(round.Players[round.PlayerIndex]);
+            self.ChangeGamer(player, round);
+
+            self.CheckPlayerOperate(player, card);
+
             player.HandCards.Add(card);
             EventSystem.Instance.Publish(self.DomainScene(),
                 new SendPlayerMessage() { Player = player, Message = new M2C_MoCard() { Card = card.ToInfo() } });
@@ -52,123 +59,260 @@ namespace ET
             Card card = round.LibCards.First();
             round.LibCards.Remove(card);
             Gamer player = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(round.Players[round.PlayerIndex]);
+            self.ChangeGamer(player, round);
+            self.CheckPlayerOperate(player, card);
             player.HandCards.Add(card);
             EventSystem.Instance.Publish(self.DomainScene(),
                 new SendPlayerMessage() { Player = player, Message = new M2C_MoCard() { Card = card.ToInfo() } });
         }
 
-        static void CheckPlayerOperate(this HangZhouMahjong self, Gamer gamer)
+        public static void OutCard(this HangZhouMahjong self)
         {
-            GameRoom room = self.DomainScene().GetComponent<GameRoomComponent>().GetRoom(gamer.RoomId);
             Round round = self.GetParent<Round>();
-            List<Card> allCard = room.GetComponent<CardComponent>().GetCard().Where(card => !round.OutCards.Contains(card)).ToList();
-
-            Card tem = null;
-
-            foreach (Card card in gamer.HandCards)
+            Card outCard = round.OutCards.FirstOrDefault();
+            if (outCard is null)
             {
-                if (tem is null)
-                {
-                    tem = card;
-                    continue;
-                }
-
-                if (tem.CardType != card.CardType)
-                {
-                    tem = card;
-                    continue;
-                }
-
-                if (tem.CardValue == card.CardValue)
-                {
-                    List<Card> select = allCard.FindAll(item => item.CardValue.Equals(tem.CardValue) && item.CardType.Equals(tem.CardType));
-                    AddOperateCard(gamer, select, OperateType.MahjongPeng);
-                    tem = card;
-                    continue;
-                }
-
-                if (self.CheckChi(tem, card))
-                {
-                    self.AddChiCard(tem, card, allCard, gamer);
-                }
-
-                tem = card;
-            }
-        }
-
-        public static void AddOperateCard(Gamer self, List<Card> cards, int type)
-        {
-            cards.ForEach(item => { AddOperateCardEach(self, item, type); });
-        }
-
-        private static void AddOperateCardEach(Gamer self, Card card, int type)
-        {
-            if (self.Operate.ContainsKey(card))
-            {
-                if (type == self.Operate[card])
-                {
-                    return;
-                }
-
-                self.Operate[card] += type;
                 return;
             }
 
-            self.Operate.Add(card, type);
+            foreach (Gamer gamer in round.Players.Select(id => round.DomainScene().GetComponent<GamerComponent>().GetPlayer(id)))
+            {
+                self.CheckPlayerOperate(gamer, outCard);
+            }
         }
 
-        private static bool CheckChi(this HangZhouMahjong self, Card _out, Card _in)
+        private static void CheckPlayerOperate(this HangZhouMahjong self, Gamer gamer, Card card)
         {
-            if (_in.CardType is CardType.Feng or CardType.Jian || _in.CardType != _out.CardType)
+            int operate = OperateType.MahjongNone;
+
+            if (self.CheckPeng(gamer.HandCards.Where(item => !gamer.OpenDeal.Keys.Contains(item)).ToList(), card) &&
+                !self.IsNowPlayer(gamer.PlayerId))
+            {
+                operate += OperateType.MahjongPeng;
+            }
+
+            if (self.CheckGang(gamer.HandCards, card,gamer))
+            {
+                operate += OperateType.MahjongGang;
+            }
+
+            if (self.CheckChi(gamer.HandCards.Where(item => !gamer.OpenDeal.Keys.Contains(item)).ToList(), card) && self.IsNextPlayer(gamer.PlayerId))
+            {
+                operate += OperateType.MahjongChi;
+            }
+
+            if (self.CheckHu(gamer.HandCards, card))
+            {
+                operate += OperateType.MahjongChi;
+            }
+
+            gamer.Operate = operate;
+
+            if (gamer.Operate == OperateType.MahjongNone)
+            {
+                return;
+            }
+
+            self.WaitOperate();
+            EventSystem.Instance.Publish(self.DomainScene(),
+                new SendPlayerMessage() { Player = gamer, Message = new M2C_OperateCard() { OperateType = operate } });
+        }
+
+        public static void WaitOperate(this HangZhouMahjong self)
+        {
+            Round round = self.GetParent<Round>();
+            round.Status = RoundStatus.WaitOperate;
+        }
+
+        public static bool IsNowPlayer(this HangZhouMahjong self, int player)
+        {
+            Round round = self.GetParent<Round>();
+            if (player == round.Players[round.PlayerIndex])
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool IsNextPlayer(this HangZhouMahjong self, int player)
+        {
+            Round round = self.GetParent<Round>();
+            return round.Players.IndexOf(player) == (round.PlayerIndex + 1);
+        }
+
+        private static bool CheckPeng(this HangZhouMahjong self, List<Card> handCards, Card card)
+        {
+            int isPeng = handCards.Count(item => item.CardValue == card.CardValue && item.CardType == card.CardType);
+            return isPeng >= 2;
+        }
+
+        private static bool CheckGang(this HangZhouMahjong self, List<Card> handCards, Card card,Gamer gamer)
+        {
+            var pengAndGang = from gang in handCards
+                    select new { item = gang, count = handCards.Count(c => c.CardValue == gang.CardValue && c.CardType == gang.CardType) };
+
+            foreach (var item in pengAndGang)
+            {
+                switch (item.count)
+                {
+                    case < 3:
+                        continue;
+                    case 4:
+                        return self.IsNowPlayer(gamer.PlayerId);
+                }
+
+                if (item.item.CardValue == card.CardValue && item.item.CardType == card.CardType)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool CheckChi(this HangZhouMahjong self, List<Card> handCards, Card card)
+        {
+            if (card.CardType is CardType.Feng or CardType.Jian)
             {
                 return false;
             }
 
-            int differ = Math.Abs(_out.CardValue - _in.CardValue);
+            int count = handCards.Where(item =>
+                            item.CardType == card.CardType && math.abs(item.CardValue - card.CardValue) < 2 &&
+                            math.abs(item.CardValue - card.CardValue) > 0)
+                    .Distinct<Card>(new CardComparer()).Count();
 
-            if (differ is 0 or > 3)
+            if (count > 1)
             {
-                return false;
+                return true;
             }
 
-            return true;
+            return false;
         }
 
-        private static void AddChiCard(this HangZhouMahjong self, Card inCard, Card outCard, List<Card> allCard, Gamer player)
+        private static bool CheckHu(this HangZhouMahjong self, List<Card> handCards, Card card)
         {
-            if (inCard.CardValue > outCard.CardValue)
-            {
-                if (inCard.CardValue - outCard.CardValue == 1)
-                {
-                    List<Card> select = allCard.FindAll(item =>
-                            item.CardType == inCard.CardType && (item.CardValue == inCard.CardValue + 1 || item.CardValue == outCard.CardValue - 1));
-                    AddOperateCard(player, select, OperateType.MahjongChi);
-                }
+            return false;
+        }
 
-                if (inCard.CardValue - outCard.CardValue == 2)
+        public static void Operate(this HangZhouMahjong self, Gamer gamer, int operate, List<Card> operateCards)
+        {
+            switch (operate)
+            {
+                case OperateType.MahjongChi:
+                    self.GamerChiCard(gamer, operateCards);
+                    break;
+                case OperateType.MahjongPeng:
+                    self.GamerPengCard(gamer);
+                    break;
+                case OperateType.MahjongGang:
+                    self.GamerGangCard(gamer, operateCards);
+                    break;
+                case OperateType.MahjongHu:
+                    self.GamerHuCard(gamer);
+                    break;
+                case OperateType.MahjongNone:
+                    self.GamerPass(gamer);
+                    break;
+            }
+        }
+
+        private static void GamerPass(this HangZhouMahjong self, Gamer gamer)
+        {
+            Round round = self.GetParent<Round>();
+            gamer.Operate = OperateType.MahjongNone;
+            bool all = round.Players.All(item => self.DomainScene().GetComponent<GamerComponent>().GetPlayer(item).Operate == OperateType.MahjongNone);
+            if (all)
+            {
+                round.Status = RoundStatus.Next;
+            }
+        }
+
+        private static void GamerChiCard(this HangZhouMahjong self, Gamer gamer, List<Card> operateCards)
+        {
+            Round round = self.GetParent<Round>();
+            Card last = round.OutCards.First();
+            round.OutCards.Remove(last);
+            gamer.HandCards.Add(last);
+            self.ChangeGamer(gamer, round);
+
+            foreach (Card item in operateCards.Select(
+                         card => gamer.HandCards.First(c => c.CardType == card.CardType && c.CardValue == card.CardValue)))
+            {
+                gamer.OpenDeal.Add(item, OpenDealType.Chi);
+            }
+        }
+
+        private static void GamerPengCard(this HangZhouMahjong self, Gamer gamer)
+        {
+            Round round = self.GetParent<Round>();
+            Card last = round.OutCards.First();
+            round.OutCards.Remove(last);
+            gamer.HandCards.Add(last);
+            self.ChangeGamer(gamer, round);
+
+            List<Card> openList = gamer.HandCards.Where(item => item.CardValue == last.CardValue && item.CardType == last.CardType).ToList();
+            for (int i = 0; i < 3; i++)
+            {
+                gamer.OpenDeal.Add(openList[i], OpenDealType.Peng);
+            }
+        }
+
+        private static void GamerGangCard(this HangZhouMahjong self, Gamer gamer, List<Card> operateCards)
+        {
+            Round round = self.GetParent<Round>();
+            int openType = OpenDealType.Gang;
+            Card GangCard = round.OutCards.First();
+
+            if (self.IsNowPlayer(gamer.PlayerId))
+            {
+                if (!gamer.OpenDeal.Keys.Contains(operateCards.First(), new CardComparer()))
                 {
-                    List<Card> select = allCard.FindAll(item =>
-                            item.CardType == inCard.CardType && item.CardValue == inCard.CardValue - 1);
-                    AddOperateCard(player, select, OperateType.MahjongChi);
+                    openType = OpenDealType.AnGang;
                 }
+                // openList = (from map in (from cards in gamer.HandCards
+                //         select new
+                //         {
+                //             card = cards,
+                //             count = gamer.HandCards.Count(item => item.CardValue == cards.CardValue && item.CardType == cards.CardType)
+                //         })
+                //     where map.count == 4
+                //     select map.card).ToList();
             }
             else
             {
-                if (outCard.CardValue - inCard.CardValue == 1)
-                {
-                    List<Card> select = allCard.FindAll(item =>
-                            item.CardType == inCard.CardType &&
-                            (item.CardValue == (outCard.CardValue + 1) || item.CardValue == (inCard.CardValue - 1)));
-                    AddOperateCard(player, select, OperateType.MahjongChi);
-                }
-
-                if (outCard.CardValue - inCard.CardValue == 2)
-                {
-                    List<Card> select = allCard.FindAll(item =>
-                            item.CardType == inCard.CardType && item.CardValue == outCard.CardValue - 1);
-                    AddOperateCard(player, select, OperateType.MahjongChi);
-                }
+                round.OutCards.Remove(GangCard);
+                gamer.HandCards.Add(GangCard);
             }
+
+            foreach (Card item in operateCards)
+            {
+                gamer.OpenDeal.Add(item, openType);
+            }
+
+            Card outCard = round.LibCards.First();
+            round.LibCards.Remove(outCard);
+            gamer.OutCards.Add(outCard);
+            round.OutCards.Add(outCard);
+
+            Card mo = round.LibCards.First();
+            round.LibCards.Remove(outCard);
+            gamer.HandCards.Add(mo);
+            self.ChangeGamer(gamer, round);
+
+            self.Gang = true;
+        }
+
+        private static void GamerHuCard(this HangZhouMahjong self, Gamer gamer)
+        {
+        }
+
+        private static void ChangeGamer(this HangZhouMahjong self, Gamer gamer, Round round)
+        {
+            self.DomainScene().GetComponent<GamerComponent>().GetPlayer(round.Players[round.PlayerIndex]).Status = PlayerStatus.Waitting;
+            round.PlayerIndex = round.Players.IndexOf(gamer.PlayerId);
+            gamer.Status = PlayerStatus.Playing;
         }
     }
 }

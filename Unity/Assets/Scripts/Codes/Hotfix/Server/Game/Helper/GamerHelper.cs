@@ -6,19 +6,19 @@ namespace ET
     [FriendOf(typeof(User))]
     public static class GamerHelper
     {
-        public static List<GamerInfo> GamerToGamerInfo(Scene scene, List<int> playerids)
+        public static List<GamerInfo> GamerToGamerInfo(Scene scene, List<int> playerids,int myid)
         {
             List<GamerInfo> infos = new();
             foreach (int id in playerids)
             {
                 Gamer gamer = scene.GetComponent<GamerComponent>().GetPlayer(id);
-                infos.Add(ToInfo(gamer));
+                infos.Add(ToInfo(gamer,gamer.PlayerId == myid));
             }
 
             return infos;
         }
-
-        public static GamerInfo ToInfo(Gamer self)
+        
+        public static GamerInfo ToInfo(Gamer self,bool my)
         {
             GamerInfo info = new();
             info.PlayerId = self.PlayerId;
@@ -27,9 +27,14 @@ namespace ET
             info.Name = "";
             info.Status = self.Status;
             info.Score = self.Score;
-            info.OpenDeal = CardHelper.CardToCardInfo(self.OpenDeal);
+            info.OpenDeal = CardHelper.ToOpenDealMap(self.OpenDeal);
             info.OutCards = CardHelper.CardToCardInfo(self.OutCards);
-            info.HandCards = CardHelper.CardToCardInfo(self.HandCards);
+            info.HandCards = new List<CardInfo>();
+            if (my)
+            {
+                info.HandCards = CardHelper.CardToCardInfo(self.HandCards);
+            }
+
             return info;
         }
     }

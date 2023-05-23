@@ -27,23 +27,6 @@ namespace ET
             }
         }
 
-        public static void DealCard(this Round self)
-        {
-            self.Players.ForEach(self.SendCardToPlayer);
-            self.RoundStart();
-        }
-
-        public static void SendCardToPlayer(this Round self, int playerid)
-        {
-            Gamer gamer = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(playerid);
-            switch (self.GameType)
-            {
-                case GameType.HangZhouMahjong:
-                    self.GetComponent<HangZhouMahjong>().DealCard(gamer);
-                    break;
-            }
-        }
-
         public static void RoundStart(this Round self)
         {
             switch (self.GameType)
@@ -62,6 +45,11 @@ namespace ET
             }
 
             return false;
+        }
+
+        public static bool IsNextPlayer(this Round self, int player)
+        {
+            return self.Players.IndexOf(player) == (self.PlayerIndex + 1);
         }
 
         public static bool IsOperate(this Round self)
@@ -92,79 +80,39 @@ namespace ET
         public static void OutCard(this Round self, Card card)
         {
             self.OutCards.Insert(0, card);
-            self.Players.ForEach(self.AllSendOutCardMessage);
-            self.CheckOperate();
+
+            switch (self.GameType)
+            {
+                case GameType.HangZhouMahjong:
+                    self.GetComponent<HangZhouMahjong>().OutCard();
+                    break;
+            }
             if (self.Status == RoundStatus.Next)
             {
                 self.NextRound();
             }
         }
 
-        public static void AllSendOutCardMessage(this Round self, int playerid)
+        public static void Operate(this Round self,Gamer gamer,int operate,List<Card> operateCards)
         {
-            Gamer player = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(playerid);
-            EventSystem.Instance.Publish(self.DomainScene(),
-                new SendPlayerMessage()
-                {
-                    Player = player,
-                    Message = new M2C_AllSendOutCard() { OutMap = GameRoomHelper.GetGamerAllOutMap(self.DomainScene(), self.Players) }
-                });
-            // self.DomainScene().GetComponent<GamerComponent>().GetPlayer(playerid)
-            //         .SendMessage(new M2C_AllOutCard() { Cards = self.OutCards });
-        }
-
-        public static void CheckOperate(this Round self)
-        {
-            foreach (int player in self.Players.Where(player => player != self.Players[self.PlayerIndex]))
+            switch (self.GameType)
             {
-                self.CheckPlayerOperate(player);
+                case GameType.HangZhouMahjong:
+                    self.GetComponent<HangZhouMahjong>().Operate(gamer,operate,operateCards);
+                    break;
             }
         }
 
-        public static void CheckPlayerOperate(this Round self, int playerId)
+        public static RoundInfo ToInfo(this Round self)
         {
-            bool ret = false;
-            Gamer player = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(playerId);
-            int operate = 0;
-            Card nowOut = self.OutCards.First();
-            foreach ((Card card, int type) in player.Operate)
-            {
-                if (card.CardValue == nowOut.CardValue && card.CardType == nowOut.CardType)
-                {
-                    operate = self.CheckGamerChiCard(type, player.PlayerId);
-                    ret = true;
-                    self.Status = RoundStatus.WaitOperate;
-                }
-            }
-
-            if (ret && operate != OperateType.MahjongNone)
-            {
-                EventSystem.Instance.Publish(self.DomainScene(),
-                    new SendPlayerMessage() { Player = player, Message = new M2C_OperateCard() { OperateType = operate } });
-                return;
-            }
-
-            self.Status = RoundStatus.Next;
+            RoundInfo info = new RoundInfo();
+            info.PlayerIndex = self.PlayerIndex;
+            info.Status = (int)self.Status;
+            info.Score = self.Score;
+            info.OutCard = CardHelper.CardToCardInfo(self.OutCards);
+            info.StartIndex = self.StartIndex;
+            return info;
         }
 
-        public static int CheckGamerChiCard(this Round self, int type, int playerId)
-        {
-            if (self.Players.IndexOf(playerId) == self.PlayerIndex + 1)
-            {
-                return type;
-            }
-            
-            if (self.Players.IndexOf(playerId) == self.PlayerIndex)
-            {
-                return OperateType.MahjongNone;
-            }
-
-            if (type > OperateType.MahjongPeng)
-            {
-                return type - OperateType.MahjongChi;
-            }
-
-            return OperateType.MahjongNone;
-        }
     }
 }

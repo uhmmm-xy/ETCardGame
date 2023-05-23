@@ -19,7 +19,7 @@ namespace ET
         public static List<Card> ShuffleCard(this CardComponent self)
         {
             List<Card> cpList = self.Cards.ToList();
-            RandomGenerator.BreakRank(cpList);
+            // RandomGenerator.BreakRank(cpList);
             return cpList;
         }
 

@@ -58,7 +58,7 @@ namespace ET.Client
      		}
      	}
 
-		public UnityEngine.UI.Text ELabel_PlayerLeftText
+		public UnityEngine.UI.Text E_DownOpenDealText
      	{
      		get
      		{
@@ -67,11 +67,28 @@ namespace ET.Client
      				Log.Error("uiTransform is null.");
      				return null;
      			}
-     			if( this.m_ELabel_PlayerLeftText == null )
+     			if( this.m_E_DownOpenDealText == null )
      			{
-		    		this.m_ELabel_PlayerLeftText = UIFindHelper.FindDeepChild<UnityEngine.UI.Text>(this.uiTransform.gameObject,"E_GamePlan/ELabel_PlayerLeft");
+		    		this.m_E_DownOpenDealText = UIFindHelper.FindDeepChild<UnityEngine.UI.Text>(this.uiTransform.gameObject,"E_GamePlan/E_DownOpenDeal");
      			}
-     			return this.m_ELabel_PlayerLeftText;
+     			return this.m_E_DownOpenDealText;
+     		}
+     	}
+
+		public UnityEngine.UI.Text ELabel_LeftPlayerText
+     	{
+     		get
+     		{
+     			if (this.uiTransform == null)
+     			{
+     				Log.Error("uiTransform is null.");
+     				return null;
+     			}
+     			if( this.m_ELabel_LeftPlayerText == null )
+     			{
+		    		this.m_ELabel_LeftPlayerText = UIFindHelper.FindDeepChild<UnityEngine.UI.Text>(this.uiTransform.gameObject,"E_GamePlan/ELabel_LeftPlayer");
+     			}
+     			return this.m_ELabel_LeftPlayerText;
      		}
      	}
 
@@ -89,6 +106,23 @@ namespace ET.Client
 		    		this.m_ELabel_LeftOutText = UIFindHelper.FindDeepChild<UnityEngine.UI.Text>(this.uiTransform.gameObject,"E_GamePlan/ELabel_LeftOut");
      			}
      			return this.m_ELabel_LeftOutText;
+     		}
+     	}
+
+		public UnityEngine.UI.Text E_LeftOpenDealText
+     	{
+     		get
+     		{
+     			if (this.uiTransform == null)
+     			{
+     				Log.Error("uiTransform is null.");
+     				return null;
+     			}
+     			if( this.m_E_LeftOpenDealText == null )
+     			{
+		    		this.m_E_LeftOpenDealText = UIFindHelper.FindDeepChild<UnityEngine.UI.Text>(this.uiTransform.gameObject,"E_GamePlan/E_LeftOpenDeal");
+     			}
+     			return this.m_E_LeftOpenDealText;
      		}
      	}
 
@@ -126,6 +160,23 @@ namespace ET.Client
      		}
      	}
 
+		public UnityEngine.UI.Text E_ReightOpenDealText
+     	{
+     		get
+     		{
+     			if (this.uiTransform == null)
+     			{
+     				Log.Error("uiTransform is null.");
+     				return null;
+     			}
+     			if( this.m_E_ReightOpenDealText == null )
+     			{
+		    		this.m_E_ReightOpenDealText = UIFindHelper.FindDeepChild<UnityEngine.UI.Text>(this.uiTransform.gameObject,"E_GamePlan/E_ReightOpenDeal");
+     			}
+     			return this.m_E_ReightOpenDealText;
+     		}
+     	}
+
 		public UnityEngine.UI.Text ELabel_PlayerUpText
      	{
      		get
@@ -157,6 +208,23 @@ namespace ET.Client
 		    		this.m_ELabel_UpOutText = UIFindHelper.FindDeepChild<UnityEngine.UI.Text>(this.uiTransform.gameObject,"E_GamePlan/ELabel_UpOut");
      			}
      			return this.m_ELabel_UpOutText;
+     		}
+     	}
+
+		public UnityEngine.UI.Text E_UpOpenDealText
+     	{
+     		get
+     		{
+     			if (this.uiTransform == null)
+     			{
+     				Log.Error("uiTransform is null.");
+     				return null;
+     			}
+     			if( this.m_E_UpOpenDealText == null )
+     			{
+		    		this.m_E_UpOpenDealText = UIFindHelper.FindDeepChild<UnityEngine.UI.Text>(this.uiTransform.gameObject,"E_GamePlan/E_UpOpenDeal");
+     			}
+     			return this.m_E_UpOpenDealText;
      		}
      	}
 
@@ -466,17 +534,140 @@ namespace ET.Client
      		}
      	}
 
+		public UnityEngine.UI.Image E_SelectCardsImage
+     	{
+     		get
+     		{
+     			if (this.uiTransform == null)
+     			{
+     				Log.Error("uiTransform is null.");
+     				return null;
+     			}
+     			if( this.m_E_SelectCardsImage == null )
+     			{
+		    		this.m_E_SelectCardsImage = UIFindHelper.FindDeepChild<UnityEngine.UI.Image>(this.uiTransform.gameObject,"E_OpatePlan/E_SelectCards");
+     			}
+     			return this.m_E_SelectCardsImage;
+     		}
+     	}
+
+		public UnityEngine.UI.Button EButton_SelectOneButton
+     	{
+     		get
+     		{
+     			if (this.uiTransform == null)
+     			{
+     				Log.Error("uiTransform is null.");
+     				return null;
+     			}
+     			if( this.m_EButton_SelectOneButton == null )
+     			{
+		    		this.m_EButton_SelectOneButton = UIFindHelper.FindDeepChild<UnityEngine.UI.Button>(this.uiTransform.gameObject,"E_OpatePlan/E_SelectCards/EButton_SelectOne");
+     			}
+     			return this.m_EButton_SelectOneButton;
+     		}
+     	}
+
+		public UnityEngine.UI.Image EButton_SelectOneImage
+     	{
+     		get
+     		{
+     			if (this.uiTransform == null)
+     			{
+     				Log.Error("uiTransform is null.");
+     				return null;
+     			}
+     			if( this.m_EButton_SelectOneImage == null )
+     			{
+		    		this.m_EButton_SelectOneImage = UIFindHelper.FindDeepChild<UnityEngine.UI.Image>(this.uiTransform.gameObject,"E_OpatePlan/E_SelectCards/EButton_SelectOne");
+     			}
+     			return this.m_EButton_SelectOneImage;
+     		}
+     	}
+
+		public UnityEngine.UI.Button EButton_SelectTwoButton
+     	{
+     		get
+     		{
+     			if (this.uiTransform == null)
+     			{
+     				Log.Error("uiTransform is null.");
+     				return null;
+     			}
+     			if( this.m_EButton_SelectTwoButton == null )
+     			{
+		    		this.m_EButton_SelectTwoButton = UIFindHelper.FindDeepChild<UnityEngine.UI.Button>(this.uiTransform.gameObject,"E_OpatePlan/E_SelectCards/EButton_SelectTwo");
+     			}
+     			return this.m_EButton_SelectTwoButton;
+     		}
+     	}
+
+		public UnityEngine.UI.Image EButton_SelectTwoImage
+     	{
+     		get
+     		{
+     			if (this.uiTransform == null)
+     			{
+     				Log.Error("uiTransform is null.");
+     				return null;
+     			}
+     			if( this.m_EButton_SelectTwoImage == null )
+     			{
+		    		this.m_EButton_SelectTwoImage = UIFindHelper.FindDeepChild<UnityEngine.UI.Image>(this.uiTransform.gameObject,"E_OpatePlan/E_SelectCards/EButton_SelectTwo");
+     			}
+     			return this.m_EButton_SelectTwoImage;
+     		}
+     	}
+
+		public UnityEngine.UI.Button EButton_SelectThreeButton
+     	{
+     		get
+     		{
+     			if (this.uiTransform == null)
+     			{
+     				Log.Error("uiTransform is null.");
+     				return null;
+     			}
+     			if( this.m_EButton_SelectThreeButton == null )
+     			{
+		    		this.m_EButton_SelectThreeButton = UIFindHelper.FindDeepChild<UnityEngine.UI.Button>(this.uiTransform.gameObject,"E_OpatePlan/E_SelectCards/EButton_SelectThree");
+     			}
+     			return this.m_EButton_SelectThreeButton;
+     		}
+     	}
+
+		public UnityEngine.UI.Image EButton_SelectThreeImage
+     	{
+     		get
+     		{
+     			if (this.uiTransform == null)
+     			{
+     				Log.Error("uiTransform is null.");
+     				return null;
+     			}
+     			if( this.m_EButton_SelectThreeImage == null )
+     			{
+		    		this.m_EButton_SelectThreeImage = UIFindHelper.FindDeepChild<UnityEngine.UI.Image>(this.uiTransform.gameObject,"E_OpatePlan/E_SelectCards/EButton_SelectThree");
+     			}
+     			return this.m_EButton_SelectThreeImage;
+     		}
+     	}
+
 		public void DestroyWidget()
 		{
 			this.m_E_GamePlanImage = null;
 			this.m_ELabel_PlayerDownText = null;
 			this.m_ELabel_DownOutText = null;
-			this.m_ELabel_PlayerLeftText = null;
+			this.m_E_DownOpenDealText = null;
+			this.m_ELabel_LeftPlayerText = null;
 			this.m_ELabel_LeftOutText = null;
+			this.m_E_LeftOpenDealText = null;
 			this.m_ELabel_PlayerReightText = null;
 			this.m_ELabel_ReightOutText = null;
+			this.m_E_ReightOpenDealText = null;
 			this.m_ELabel_PlayerUpText = null;
 			this.m_ELabel_UpOutText = null;
+			this.m_E_UpOpenDealText = null;
 			this.m_ELoopScrollList_CardListLoopHorizontalScrollRect = null;
 			this.m_E_BeginBtnPlanImage = null;
 			this.m_EButton_ReadyButton = null;
@@ -495,18 +686,29 @@ namespace ET.Client
 			this.m_EButton_HuImage = null;
 			this.m_EButton_PassButton = null;
 			this.m_EButton_PassImage = null;
+			this.m_E_SelectCardsImage = null;
+			this.m_EButton_SelectOneButton = null;
+			this.m_EButton_SelectOneImage = null;
+			this.m_EButton_SelectTwoButton = null;
+			this.m_EButton_SelectTwoImage = null;
+			this.m_EButton_SelectThreeButton = null;
+			this.m_EButton_SelectThreeImage = null;
 			this.uiTransform = null;
 		}
 
 		private UnityEngine.UI.Image m_E_GamePlanImage = null;
 		private UnityEngine.UI.Text m_ELabel_PlayerDownText = null;
 		private UnityEngine.UI.Text m_ELabel_DownOutText = null;
-		private UnityEngine.UI.Text m_ELabel_PlayerLeftText = null;
+		private UnityEngine.UI.Text m_E_DownOpenDealText = null;
+		private UnityEngine.UI.Text m_ELabel_LeftPlayerText = null;
 		private UnityEngine.UI.Text m_ELabel_LeftOutText = null;
+		private UnityEngine.UI.Text m_E_LeftOpenDealText = null;
 		private UnityEngine.UI.Text m_ELabel_PlayerReightText = null;
 		private UnityEngine.UI.Text m_ELabel_ReightOutText = null;
+		private UnityEngine.UI.Text m_E_ReightOpenDealText = null;
 		private UnityEngine.UI.Text m_ELabel_PlayerUpText = null;
 		private UnityEngine.UI.Text m_ELabel_UpOutText = null;
+		private UnityEngine.UI.Text m_E_UpOpenDealText = null;
 		private UnityEngine.UI.LoopHorizontalScrollRect m_ELoopScrollList_CardListLoopHorizontalScrollRect = null;
 		private UnityEngine.UI.Image m_E_BeginBtnPlanImage = null;
 		private UnityEngine.UI.Button m_EButton_ReadyButton = null;
@@ -525,6 +727,13 @@ namespace ET.Client
 		private UnityEngine.UI.Image m_EButton_HuImage = null;
 		private UnityEngine.UI.Button m_EButton_PassButton = null;
 		private UnityEngine.UI.Image m_EButton_PassImage = null;
+		private UnityEngine.UI.Image m_E_SelectCardsImage = null;
+		private UnityEngine.UI.Button m_EButton_SelectOneButton = null;
+		private UnityEngine.UI.Image m_EButton_SelectOneImage = null;
+		private UnityEngine.UI.Button m_EButton_SelectTwoButton = null;
+		private UnityEngine.UI.Image m_EButton_SelectTwoImage = null;
+		private UnityEngine.UI.Button m_EButton_SelectThreeButton = null;
+		private UnityEngine.UI.Image m_EButton_SelectThreeImage = null;
 		public Transform uiTransform = null;
 	}
 }

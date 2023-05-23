@@ -3,34 +3,29 @@
 namespace ET
 {
     [ActorMessageHandler(SceneType.Game)]
-    [FriendOf(typeof(Gamer))]
-    public class C2M_OutCardHandler : AMActorLocationRpcHandler<Account, C2M_OutCard, M2C_OutCard>
+    [FriendOf(typeof (Gamer))]
+    public class C2M_OutCardHandler: AMActorLocationHandler<Account, C2M_OutCard>
     {
-        protected override async ETTask Run(Account unit, C2M_OutCard request, M2C_OutCard response)
+        protected override async ETTask Run(Account unit, C2M_OutCard request)
         {
             Gamer gamer = unit.GetParent<Gamer>();
             GameRoom room = unit.DomainScene().GetComponent<GameRoomComponent>().GetRoom(gamer.RoomId);
             if (!room.GetNowRound().IsNowPlayer(gamer.PlayerId) || room.GetNowRound().IsOperate())
             {
-                response.HandCard = CardHelper.CardToCardInfo(gamer.HandCards);
-                return;
-            }
-            
-            Card card = gamer.OutCard(request.Card.ToEnity());
-            if (card is null)
-            {
-                response.HandCard = CardHelper.CardToCardInfo(gamer.HandCards);
                 return;
             }
 
-            foreach (Card item in gamer.Operate.Keys)
+            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameMessageDoing, gamer.PlayerId))
             {
-                Log.Info($"player {gamer.PlayerId} operateCard in Type:{item.GetTypeName()} and Value:{item.GetValueName()}, is operateType {gamer.Operate[item]}");
+                Card card = gamer.OutCard(request.Card.ToEnity());
+                if (card is null)
+                {
+                    return;
+                }
+
+                room.GetNowRound().OutCard(card);
+                RoomSendHelper.SendRoomPlayer(room, new M2C_UpdateRoom());
             }
-            room.GetNowRound().OutCard(card);
-            response.HandCard =  CardHelper.CardToCardInfo(gamer.HandCards);
-            await ETTask.CompletedTask;
-            
         }
     }
 }

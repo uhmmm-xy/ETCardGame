@@ -1,6 +1,6 @@
 ﻿namespace ET
 {
-    public static class PlayerStatus
+    public struct PlayerStatus
     {
         public const int None = 0; //无状态..刚刚进入房间
         public const int Ready = 1; //准备中

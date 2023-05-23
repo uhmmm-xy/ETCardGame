@@ -19,7 +19,9 @@ namespace ET.Client
 
 		public int SelectIndex = -1;
 
-		public Dictionary<int, Text> PlayerOutText = new Dictionary<int, Text>();
+		public bool Operate = false;
+
+		public RoomInfo SeflInfo;
 
 	}
 }
