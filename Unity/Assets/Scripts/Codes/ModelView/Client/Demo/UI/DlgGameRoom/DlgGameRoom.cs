@@ -23,5 +23,6 @@ namespace ET.Client
 
 		public RoomInfo SeflInfo;
 
+		public SelectCardMap SelectedCardMap;
 	}
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using ET.EventType;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -104,7 +105,16 @@ namespace ET.Client
             self.View.ELabel_PlayerDownText.text = playerids[index];
             self.SetCardText(info.Players[index].OutCards, self.View.ELabel_DownOutText);
             self.SetCardText(info.Players[index].OpenDeal, self.View.E_DownOpenDealText);
-            self.SetCard(info.Players[index].HandCards);
+            if (info.Players[index].OpenDeal != null)
+            {
+                self.SetCard(info.Players[index].HandCards.Where(item =>
+                                info.Players[index].OpenDeal.Any(open => !CardInfoHelper.Equals(open.Card, item)))
+                        .ToList());
+            }
+            else
+            {
+                self.SetCard(info.Players[index].HandCards);
+            }
 
             if (info.Players[index].Status == PlayerStatus.Playing)
             {
@@ -251,15 +261,26 @@ namespace ET.Client
             //self.SeflInfo;
             RoundInfo round = self.SeflInfo.Rounds.Last();
             CardInfo lastCard = round.OutCard.First();
+            List<CardInfo> Chilist = self.Cards.Where(item =>
+                    item.Type == lastCard.Type && math.abs(item.Value - lastCard.Value) < 2 && math.abs(item.Value - lastCard.Value) > 0).ToList();
+            Chilist = Chilist.Select(item => item.ToEnity()).Distinct(new CardComparer()).Select(item => item.ToInfo()).ToList();
+
+            if (Chilist.Count > 2)
+            {
+                self.ShowChiOperateBtn(Chilist, lastCard);
+                return;
+            }
+
+            GameRoomHelper.GamerOperate(self.ClientScene(), OperateType.MahjongGang, Chilist);
             self.View.E_OpatePlanImage.SetVisible(false);
         }
 
         public static void SendGang(this DlgGameRoom self)
         {
-            RoundInfo round = self.SeflInfo.Rounds.Last();
-            CardInfo lastCard = round.OutCard.First();
+            RoundInfo round = self.SeflInfo.Rounds.LastOrDefault();
+            CardInfo lastCard = round.OutCard?.FirstOrDefault();
 
-            List<CardInfo> gang = self.Cards.Where(item => item.Value == lastCard.Value && lastCard.Type == item.Type).ToList();
+            List<CardInfo> gang = self.Cards.Where(item => CardInfoHelper.Equals(item, lastCard)).ToList();
             if (gang.Count == 4)
             {
                 GameRoomHelper.GamerOperate(self.ClientScene(), OperateType.MahjongGang, gang);
@@ -267,11 +288,12 @@ namespace ET.Client
             }
 
             gang = (from map in (from cards in self.Cards
-                    select new { card = cards, count = self.Cards.Count(item => item.Value == cards.Value && item.Type == cards.Type) })
+                    select new { card = cards, count = self.Cards.Count(item => CardInfoHelper.Equals(item, cards)) })
                 where map.count == 4
                 select map.card).ToList();
             if (gang.Count > 4)
             {
+                self.View.E_SelectCardsImage.SetVisible(true);
                 List<Card> selItem = gang.Select(item => item.ToEnity()).Distinct(new CardComparer()).ToList();
                 for (int i = 0; i < selItem.Count; i++)
                 {
@@ -279,6 +301,7 @@ namespace ET.Client
                         new SelectCardMap() { Card = selItem[i].ToInfo(), Type = SelectCardType.MahjongGang });
                     self.GetSelectPlanIndex(i).SetVisible(true);
                 }
+
                 return;
             }
 
@@ -300,24 +323,115 @@ namespace ET.Client
 
         public static void OperateSelect(this DlgGameRoom self, SelectCardMap card)
         {
+            foreach (Scroll_Item_Card item in self.ItemCards.Values)
+            {
+                if (item.uiTransform != null)
+                {
+                    item.EButton_CardImage.color = Color.gray;
+                }
+            }
+
             List<Scroll_Item_Card> selCards = null;
+            List<CardInfo> selInfo = null;
             switch (card.Type)
             {
                 case SelectCardType.MahjongGang:
-                    selCards = self.ItemCards.Select(a => a.Value).Where(a => a.Card == card.Card).ToList();
+                    selCards = self.ItemCards.Select(a => a.Value).Where(a => CardInfoHelper.Equals(a.Card, card.Card)).ToList();
+                    selInfo = self.Cards.Where(item => CardInfoHelper.Equals(item, card.Card)).ToList();
                     break;
                 case SelectCardType.MahjongChiLeft:
+                    selInfo = self.Cards.Where(item =>
+                            item.Type == card.Card.Type && (item.Value - card.Card.Value) < 2 && (item.Value - card.Card.Value) > 0).ToList();
+                    selInfo = selInfo.Select(item => item.ToEnity()).Distinct(new CardComparer()).Select(item => item.ToInfo()).ToList();
+                    selCards = self.GetChiCardBtn(selInfo);
                     break;
                 case SelectCardType.MahjongChiMiddle:
+                    selInfo = self.Cards.Where(item => item.Type == card.Card.Type && Math.Abs(item.Value - card.Card.Value) == 1).ToList();
+                    selInfo = selInfo.Select(item => item.ToEnity()).Distinct(new CardComparer()).Select(item => item.ToInfo()).ToList();
+                    selCards = self.GetChiCardBtn(selInfo);
                     break;
                 case SelectCardType.MahjongChiReight:
+                    selInfo = self.Cards.Where(item =>
+                            item.Type == card.Card.Type && (item.Value - card.Card.Value) > -2 && (item.Value - card.Card.Value) < 0).ToList();
+                    selInfo = selInfo.Select(item => item.ToEnity()).Distinct(new CardComparer()).Select(item => item.ToInfo()).ToList();
+                    selCards = self.GetChiCardBtn(selInfo);
                     break;
             }
 
+            if (card.Equals(self.SelectedCardMap))
+            {
+                Log.Info($"select CardMap is {card.Type} {card.Card.Type} {card.Card.Value}");
+                GameRoomHelper.GamerOperate(self.ClientScene(), OperateType.MahjongGang, selInfo);
+                self.View.E_SelectCardsImage.SetVisible(false);
+                return;
+            }
+
+            self.SelectedCardMap = card;
+
             foreach (Scroll_Item_Card item in selCards)
             {
-                item.EButton_CardButton.Select();
+                item.EButton_CardImage.color = Color.red;
             }
+        }
+
+        public static List<Scroll_Item_Card> GetChiCardBtn(this DlgGameRoom self, List<CardInfo> infos)
+        {
+            List<Scroll_Item_Card> ret = new();
+            Scroll_Item_Card tem = null;
+            foreach (Scroll_Item_Card item in self.ItemCards.Values.Where(a => infos.Any(i => i.Value == a.Card.Value && i.Type == a.Card.Type)))
+            {
+                if (tem == null)
+                {
+                    tem = item;
+                    continue;
+                }
+
+                if (tem != item)
+                {
+                    ret.Add(tem);
+                    ret.Add(item);
+                    break;
+                }
+
+                tem = item;
+            }
+
+            return ret;
+        }
+
+        public static void ShowChiOperateBtn(this DlgGameRoom self, List<CardInfo> infos, CardInfo source)
+        {
+            if (infos.Count == 4)
+            {
+                self.GetSelectIndex(0).AddListenerWithParam<SelectCardMap>(self.OperateSelect,
+                    new SelectCardMap() { Card = source, Type = SelectCardType.MahjongChiLeft });
+                self.GetSelectPlanIndex(0).SetVisible(true);
+                self.GetSelectIndex(1).AddListenerWithParam<SelectCardMap>(self.OperateSelect,
+                    new SelectCardMap() { Card = source, Type = SelectCardType.MahjongChiMiddle });
+                self.GetSelectPlanIndex(1).SetVisible(true);
+                self.GetSelectIndex(2).AddListenerWithParam<SelectCardMap>(self.OperateSelect,
+                    new SelectCardMap() { Card = source, Type = SelectCardType.MahjongChiReight });
+                self.GetSelectPlanIndex(2).SetVisible(true);
+                return;
+            }
+
+            bool isLeft = (source.Value - infos.First().Value == 2);
+
+            self.GetSelectIndex(1).AddListenerWithParam<SelectCardMap>(self.OperateSelect,
+                new SelectCardMap() { Card = source, Type = SelectCardType.MahjongChiMiddle });
+            self.GetSelectPlanIndex(1).SetVisible(true);
+
+            if (isLeft)
+            {
+                self.GetSelectIndex(0).AddListenerWithParam<SelectCardMap>(self.OperateSelect,
+                    new SelectCardMap() { Card = source, Type = SelectCardType.MahjongChiLeft });
+                self.GetSelectPlanIndex(0).SetVisible(true);
+                return;
+            }
+
+            self.GetSelectIndex(2).AddListenerWithParam<SelectCardMap>(self.OperateSelect,
+                new SelectCardMap() { Card = source, Type = SelectCardType.MahjongChiReight });
+            self.GetSelectPlanIndex(2).SetVisible(true);
         }
     }
 }

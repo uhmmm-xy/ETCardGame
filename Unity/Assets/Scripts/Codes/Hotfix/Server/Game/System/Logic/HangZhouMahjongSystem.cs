@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Linq;
 using ET.Server.EventType;
-using Unity.Mathematics;
+using MongoDB.Bson;
 
 namespace ET
 {
@@ -85,7 +85,7 @@ namespace ET
         {
             int operate = OperateType.MahjongNone;
 
-            if (self.CheckPeng(gamer.HandCards.Where(item => !gamer.OpenDeal.Keys.Contains(item)).ToList(), card) &&
+            if (self.CheckPeng(gamer.HandCards.Where(item => !gamer.OpenDeal.Keys.Contains(item, new CardComparer())).ToList(), card) &&
                 !self.IsNowPlayer(gamer.PlayerId))
             {
                 operate += OperateType.MahjongPeng;
@@ -96,7 +96,8 @@ namespace ET
                 operate += OperateType.MahjongGang;
             }
 
-            if (self.CheckChi(gamer.HandCards.Where(item => !gamer.OpenDeal.Keys.Contains(item)).ToList(), card) && self.IsNextPlayer(gamer.PlayerId))
+            if (self.CheckChi(gamer.HandCards.Where(item => !gamer.OpenDeal.Keys.Contains(item, new CardComparer())).ToList(), card) &&
+                self.IsNextPlayer(gamer.PlayerId))
             {
                 operate += OperateType.MahjongChi;
             }
@@ -178,17 +179,37 @@ namespace ET
                 return false;
             }
 
-            int count = handCards.Where(item =>
-                            item.CardType == card.CardType && math.abs(item.CardValue - card.CardValue) < 2 &&
-                            math.abs(item.CardValue - card.CardValue) > 0)
-                    .Distinct<Card>(new CardComparer()).Count();
+            List<Card> chiList = handCards.Where(item =>
+                            item.CardType == card.CardType && Math.Abs(item.CardValue - card.CardValue) < 2 &&
+                            Math.Abs(item.CardValue - card.CardValue) > 0)
+                    .Distinct<Card>(new CardComparer()).ToList();
 
-            if (count > 1)
+            Log.Info($"ChiList is {chiList.ToJson()} is Count : {chiList.Count}");
+
+            if (chiList.Count <= 1)
             {
-                return true;
+                return false;
             }
 
-            return false;
+            Card tem = null;
+            bool ret = false;
+
+            foreach (Card item in chiList)
+            {
+                if (tem == null)
+                {
+                    tem = item;
+                    continue;
+                }
+
+                ret = tem.CheckVicinity(item);
+                if (!ret)
+                {
+                    tem = item;
+                }
+            }
+
+            return ret;
         }
 
         private static bool CheckHu(this HangZhouMahjong self, List<Card> handCards, Card card)
@@ -300,6 +321,7 @@ namespace ET
 
             self.Gang = true;
             round.Status = RoundStatus.Next;
+            self.CheckPlayerOperate(gamer, mo);
         }
 
         private static void GamerHuCard(this HangZhouMahjong self, Gamer gamer)

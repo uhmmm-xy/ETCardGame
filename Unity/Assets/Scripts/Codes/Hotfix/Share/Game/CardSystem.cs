@@ -15,8 +15,6 @@ namespace ET
                 self.CardValue = value;
             }
         }
-        
-       
 
         public static List<Card> SortCard(this List<Card> self)
         {
@@ -50,6 +48,12 @@ namespace ET
             card.CardValue = self.Value;
             card.CardType = self.Type;
             return card;
+        }
+
+        public static bool CheckVicinity(this Card self, Card source)
+        {
+            return self.CardType.Equals(source.CardType) && Math.Abs(self.CardValue - source.CardValue) < 2 &&
+                    Math.Abs(self.CardValue - source.CardValue) != 0;
         }
     }
 }
