@@ -52,6 +52,8 @@ namespace ET.Server
                     scene.AddComponent<BenchmarkClientComponent>();
                     break;
                 case SceneType.Game:
+                    scene.AddComponent<GameRoomComponent>();
+                    scene.AddComponent<GamerComponent>();
                     break;
                 case SceneType.Account:
                     scene.AddComponent<AccountSessionComponent>();

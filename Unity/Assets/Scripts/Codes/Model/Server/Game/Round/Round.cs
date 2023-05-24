@@ -3,13 +3,14 @@
 namespace ET
 {
     [ChildOf(typeof(RoundComponent))]
-    public class Round: Entity, IAwake<List<Card>,List<long>,int,int>
+    public class Round: Entity, IAwake<List<Card>,List<int>,int,int>
     {
         public List<Card> LibCards = new (); //底牌
         public List<Card> OutCards = new (); //弃牌
         public List<int> Score; //分数
-        public List<long> Players; //玩家
+        public List<int> Players; //玩家
 
+        public int StartIndex;
         public int PlayerIndex; //当前回合玩家
         public int GameType;
         public RoundStatus Status;

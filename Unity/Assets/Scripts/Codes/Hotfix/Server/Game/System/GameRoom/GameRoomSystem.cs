@@ -68,7 +68,7 @@ namespace ET
             return self.GetComponent<RoundComponent>().GetChild<Round>(self.RoundIndex);
         }
 
-        public static void AddPlayer(this GameRoom self, long playerId)
+        public static void AddPlayer(this GameRoom self, int playerId)
         {
             if (self.Players.Count == self.PlayerCount)
             {
@@ -79,19 +79,19 @@ namespace ET
             self.Players.Add(playerId);
         }
 
-        public static void AddWatchPlayer(this GameRoom self, long playerId)
+        public static void AddWatchPlayer(this GameRoom self, int playerId)
         {
             self.WatchPlayers.Add(playerId);
         }
 
-        public static List<long> GetPlayers(this GameRoom self)
+        public static List<int> GetPlayers(this GameRoom self)
         {
             return self.Players;
         }
 
         public static void PlayerReady(this GameRoom self)
         {
-            List<long> readyPlayer = self.Players.Where(playerId =>
+            List<int> readyPlayer = self.Players.Where(playerId =>
                     self.DomainScene().GetComponent<GamerComponent>().GetPlayer(playerId).Status == PlayerStatus.Ready).ToList();
 
             self.SendPlayerReadying(readyPlayer);
@@ -113,19 +113,35 @@ namespace ET
             self.Start();
         }
 
-        public static void SendGameStarting(this GameRoom self, long player)
+        public static void SendGameStarting(this GameRoom self, int player)
         {
             Gamer gamePlayer = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(player);
             // gamePlayer.SendMessage(new M2C_GameStarting());
         }
 
-        public static void SendPlayerReadying(this GameRoom self, List<long> readyplayer)
+        public static void SendPlayerReadying(this GameRoom self, List<int> readyplayer)
         {
             self.Players.ForEach(v =>
             {
                 Gamer gamePlayer = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(v);
                 //gamePlayer.SendMessage(new M2C_PlayerReadying() { PlayerIds = readyplayer });
             });
+        }
+
+        public static RoomInfo ToInfo(this GameRoom self)
+        {
+            RoomInfo roomInfo = new RoomInfo();
+            roomInfo.Players = new();
+            roomInfo.Rounds = new();
+            roomInfo.RoomId = self.RoomId;
+            roomInfo.Status = self.RoomStatus;
+            foreach (int player in self.Players)
+            {
+                Gamer gamer = self.DomainScene().GetComponent<GamerComponent>().GetPlayer(player);
+                roomInfo.Players.Add(gamer.ToInfo());
+            }
+            Log.Info(roomInfo.ToJson()+$"playerCount : {self.Players.Count}");
+            return roomInfo;
         }
     }
 }

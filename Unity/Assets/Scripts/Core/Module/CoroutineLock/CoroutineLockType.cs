@@ -14,6 +14,7 @@ namespace ET
         public const int LoadUIBaseWindows = 8;
 
         public const int LoginAccount = 9;
+        public const int GameCreateRoom = 10;
 
         public const int Max = 100; // 这个必须最大
     }

@@ -304,3 +304,82 @@ message G2C_AuthToken // IResponse
 	UserInfo Info = 4;
 }
 
+//ResponseType G2C_CreatedRoom
+message C2G_CreatedRoom // IRequest
+{
+	int32 RpcId = 1;
+	int32 GameId = 2;
+}
+
+message G2C_CreatedRoom // IResponse
+{
+	int32 RpcId = 1;
+	int32 Error = 2;
+	string Message = 3;
+	int32 RoomId = 4;
+}
+
+//ResponseType G2C_EnterRoom
+message C2G_EnterRoom // IRequest
+{
+	int32 RpcId = 1;
+	int32 RoomId = 2;
+	int32 GameId = 3;
+}
+
+message G2C_EnterRoom // IResponse
+{
+	int32 RpcId = 1;
+	int32 Error = 2;
+	string Message = 3;
+	int32 RoomId = 4;
+}
+
+message CardInfo
+{
+	int32 Type = 1;
+	int32 Value = 2;
+}
+
+message GamerInfo
+{
+	int32 PlayerId = 1;
+	repeated CardInfo OutCards = 2;
+	string Hander = 3;
+	string Name = 4;
+	repeated CardInfo OpenDeal = 5;
+	int32 Score = 6;
+	int32 Status = 7;
+	repeated CardInfo HandCards = 8;
+}
+
+message RoundInfo
+{
+	int32 StartIndex = 1;
+	repeated int32 Score = 2;
+	int32 PlayerIndex = 3;
+	int32 Status = 4;	
+}
+
+message RoomInfo
+{
+	int32 RoomId = 1;
+	repeated GamerInfo Players = 2;
+	repeated RoundInfo Rounds = 3;
+	int32 Status = 4;
+}
+
+//ResponseType M2C_RoomInfo
+message C2M_RoomInfo // IActorLocationRequest
+{
+	int32 RpcId = 1;
+	int32 RoomId = 2;
+}
+
+message M2C_RoomInfo // IActorLocationResponse
+{
+	int32 RpcId = 1;
+	int32 Error = 2;
+	string Message = 3;
+	RoomInfo Info = 4;
+}

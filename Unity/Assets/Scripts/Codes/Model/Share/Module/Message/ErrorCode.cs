@@ -18,5 +18,7 @@ namespace ET
         public const int ERR_AccountNotLogin = 110002;  //账号未登录
         public const int ERR_AccountDisconnect = 110003;  //账号断线
         public const int ERR_AccountMuchOpt = 110004;   //账号为空
+
+        public const int ERR_RoomIsNull = 120001; //不存在的房间
     }
 }

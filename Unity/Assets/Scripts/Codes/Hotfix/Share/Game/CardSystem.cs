@@ -32,5 +32,13 @@ namespace ET
             CardConfig cardConfig = CardConfigCategory.Instance.Get(self.CardType);
             return cardConfig.ValueName[self.CardValue];
         }
+
+        public static CardInfo ToInfo(this Card self)
+        {
+            CardInfo info = new();
+            info.Type = self.CardType;
+            info.Value = self.CardValue;
+            return info;
+        }
     }
 }

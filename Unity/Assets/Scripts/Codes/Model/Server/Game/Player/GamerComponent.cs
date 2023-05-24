@@ -6,6 +6,6 @@ namespace ET
     public class GamerComponent : Entity,IAwake,IDestroy
     {
         public List<int> PlayerIds = new();
-        public Dictionary<long, Gamer> Gamers = new();
+        public Dictionary<int, Gamer> Gamers = new();
     }
 }
