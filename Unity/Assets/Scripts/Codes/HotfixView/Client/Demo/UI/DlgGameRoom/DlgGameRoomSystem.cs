@@ -242,7 +242,7 @@ namespace ET.Client
 
         public static void SendPeng(this DlgGameRoom self)
         {
-            GameRoomHelper.GamerOperate(self.ClientScene(), OperateType.MahjongChi, new List<CardInfo>());
+            GameRoomHelper.GamerOperate(self.ClientScene(), OperateType.MahjongPeng, new List<CardInfo>());
             self.View.E_OpatePlanImage.SetVisible(false);
         }
 
@@ -279,7 +279,6 @@ namespace ET.Client
                         new SelectCardMap() { Card = selItem[i].ToInfo(), Type = SelectCardType.MahjongGang });
                     self.GetSelectPlanIndex(i).SetVisible(true);
                 }
-
                 return;
             }
 

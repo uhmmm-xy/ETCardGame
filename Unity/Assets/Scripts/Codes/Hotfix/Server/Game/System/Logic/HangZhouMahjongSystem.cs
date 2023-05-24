@@ -91,7 +91,7 @@ namespace ET
                 operate += OperateType.MahjongPeng;
             }
 
-            if (self.CheckGang(gamer.HandCards, card,gamer))
+            if (self.CheckGang(gamer.HandCards, card, gamer))
             {
                 operate += OperateType.MahjongGang;
             }
@@ -147,25 +147,25 @@ namespace ET
             return isPeng >= 2;
         }
 
-        private static bool CheckGang(this HangZhouMahjong self, List<Card> handCards, Card card,Gamer gamer)
+        private static bool CheckGang(this HangZhouMahjong self, List<Card> handCards, Card card, Gamer gamer)
         {
-            var pengAndGang = from gang in handCards
-                    select new { item = gang, count = handCards.Count(c => c.CardValue == gang.CardValue && c.CardType == gang.CardType) };
-
-            foreach (var item in pengAndGang)
+            //如果是我出牌。我就不可以杠操作
+            if (card.Equals(gamer.OutCards.LastOrDefault()))
             {
-                switch (item.count)
-                {
-                    case < 3:
-                        continue;
-                    case 4:
-                        return self.IsNowPlayer(gamer.PlayerId);
-                }
+                return false;
+            }
 
-                if (item.item.CardValue == card.CardValue && item.item.CardType == card.CardType)
-                {
-                    return true;
-                }
+            var pengAndGang = (from gang in handCards
+                select new { item = gang, count = handCards.Count(c => c.CardValue == gang.CardValue && c.CardType == gang.CardType) }).ToArray();
+
+            if (pengAndGang.Where(item => item.count == 3).Select(item => item.item).Contains(card, new CardComparer()))
+            {
+                return true;
+            }
+
+            if (pengAndGang.Any(item => item.count == 4))
+            {
+                return self.IsNowPlayer(gamer.PlayerId);
             }
 
             return false;
@@ -222,7 +222,8 @@ namespace ET
         {
             Round round = self.GetParent<Round>();
             gamer.Operate = OperateType.MahjongNone;
-            bool all = round.Players.All(item => self.DomainScene().GetComponent<GamerComponent>().GetPlayer(item).Operate == OperateType.MahjongNone);
+            bool all = round.Players.All(item =>
+                    self.DomainScene().GetComponent<GamerComponent>().GetPlayer(item).Operate == OperateType.MahjongNone);
             if (all)
             {
                 round.Status = RoundStatus.Next;
@@ -242,6 +243,8 @@ namespace ET
             {
                 gamer.OpenDeal.Add(item, OpenDealType.Chi);
             }
+
+            round.Status = RoundStatus.Next;
         }
 
         private static void GamerPengCard(this HangZhouMahjong self, Gamer gamer)
@@ -257,6 +260,8 @@ namespace ET
             {
                 gamer.OpenDeal.Add(openList[i], OpenDealType.Peng);
             }
+
+            round.Status = RoundStatus.Next;
         }
 
         private static void GamerGangCard(this HangZhouMahjong self, Gamer gamer, List<Card> operateCards)
@@ -271,14 +276,6 @@ namespace ET
                 {
                     openType = OpenDealType.AnGang;
                 }
-                // openList = (from map in (from cards in gamer.HandCards
-                //         select new
-                //         {
-                //             card = cards,
-                //             count = gamer.HandCards.Count(item => item.CardValue == cards.CardValue && item.CardType == cards.CardType)
-                //         })
-                //     where map.count == 4
-                //     select map.card).ToList();
             }
             else
             {
@@ -302,6 +299,7 @@ namespace ET
             self.ChangeGamer(gamer, round);
 
             self.Gang = true;
+            round.Status = RoundStatus.Next;
         }
 
         private static void GamerHuCard(this HangZhouMahjong self, Gamer gamer)

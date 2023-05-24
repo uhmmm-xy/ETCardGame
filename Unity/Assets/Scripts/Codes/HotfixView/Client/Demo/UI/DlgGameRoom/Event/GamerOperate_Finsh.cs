@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ET.EventType;
+using MongoDB.Bson;
+using UnityEngine;
 
 namespace ET.Client
 {
@@ -16,13 +19,14 @@ namespace ET.Client
             scene.GetComponent<UIComponent>().GetDlgLogic<DlgGameRoom>().View.EButton_PengButton.SetVisible(false);
             scene.GetComponent<UIComponent>().GetDlgLogic<DlgGameRoom>().View.EButton_PassButton.SetVisible(true);
             scene.GetComponent<UIComponent>().GetDlgLogic<DlgGameRoom>().View.E_SelectCardsImage.SetVisible(false);
-            
+
             scene.GetComponent<UIComponent>().GetDlgLogic<DlgGameRoom>().View.EButton_SelectOneImage.SetVisible(false);
             scene.GetComponent<UIComponent>().GetDlgLogic<DlgGameRoom>().View.EButton_SelectTwoImage.SetVisible(false);
             scene.GetComponent<UIComponent>().GetDlgLogic<DlgGameRoom>().View.EButton_SelectThreeImage.SetVisible(false);
 
             List<int> operates = new List<int>();
-            GetOperateList(operates,a.Type);
+            GetOperateList(operates, a.Type);
+            Log.Info($"Gamer Operate List is {operates.ToJson()} Score:{a.Type}");
 
             foreach (int operate in operates)
             {
@@ -42,6 +46,7 @@ namespace ET.Client
                         break;
                 }
             }
+
             await ETTask.CompletedTask;
         }
 
@@ -53,27 +58,24 @@ namespace ET.Client
                 {
                     case >= OperateType.MahjongHu:
                         operates.Add(OperateType.MahjongHu);
-                        type =  - OperateType.MahjongHu;
+                        type -= OperateType.MahjongHu;
                         continue;
                     case >= OperateType.MahjongGang:
                         operates.Add(OperateType.MahjongGang);
-                        type =  - OperateType.MahjongGang;
+                        type -= OperateType.MahjongGang;
                         continue;
                     case >= OperateType.MahjongPeng:
                         operates.Add(OperateType.MahjongPeng);
-                        type =  - OperateType.MahjongPeng;
+                        type -= OperateType.MahjongPeng;
                         continue;
                     case >= OperateType.MahjongChi:
                         operates.Add(OperateType.MahjongChi);
-                        type =  - OperateType.MahjongChi;
+                        type -= OperateType.MahjongChi;
                         continue;
                     case OperateType.MahjongNone:
                     default:
-                        break;
+                        return;
                 }
-
-                operates.Add(type);
-                break;
             }
         }
     }

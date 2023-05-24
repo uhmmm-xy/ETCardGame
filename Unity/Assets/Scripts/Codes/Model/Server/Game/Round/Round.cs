@@ -21,6 +21,7 @@ namespace ET
     public enum RoundStatus
     {
         WaitOperate,//等待操作
+        OutCard, //出牌阶段
         Next, //继续回合
         Over, //回合结束
     }
