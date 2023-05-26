@@ -25,7 +25,7 @@ namespace ET
                 return;
             }
 
-            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameEnterAndQuitRoom, request.PlayerId))
+            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameEnterAndQuitRoom, request.RoomId))
             {
                 Gamer gamer = null;
 

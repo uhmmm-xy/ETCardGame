@@ -17,9 +17,9 @@ namespace ET
                 return;
             }
 
-            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameMessageDoing, gamer.PlayerId))
+            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameMessageDoing, gamer.RoomId))
             {
-                room.GetNowRound().Operate(gamer, message.Operate, CardHelper.CardInfoToCard(message.OperateCards));
+                room.GetNowRound().Operate(gamer, message.Operate, CardHelper.CardInfoToCard(message.OperateCards, room));
                 RoomSendHelper.SendRoomPlayer(room, new M2C_UpdateRoom());
             }
         }

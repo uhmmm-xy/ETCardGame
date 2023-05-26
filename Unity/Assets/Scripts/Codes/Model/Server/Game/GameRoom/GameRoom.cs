@@ -18,7 +18,7 @@ namespace ET
         public int PlayerCount; //玩家数
         public int RountCount; //回合数 
 
-        public long RoundIndex; //当前回合
+        public int RoundIndex; //当前回合
         public int PlayerIndex; //当前玩家
 
         public int RoomId;

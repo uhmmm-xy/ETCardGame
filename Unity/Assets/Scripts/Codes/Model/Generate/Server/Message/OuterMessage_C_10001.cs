@@ -746,6 +746,9 @@ namespace ET
 		[ProtoMember(9)]
 		public int Operate { get; set; }
 
+		[ProtoMember(10)]
+		public List<CardInfo> WinCards { get; set; }
+
 	}
 
 	[Message(OuterMessage.RoundInfo)]

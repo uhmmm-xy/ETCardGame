@@ -5,6 +5,10 @@
     {
         public int Piao;
         public bool Gang;
+        public const int JokerType = 4;
+        public const int JokerValue = 2;
+        public int Mult = 1;
+        
     }
 
     public partial struct CardType

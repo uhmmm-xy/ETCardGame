@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using ET.EventType;
+using MongoDB.Bson;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
@@ -105,11 +106,17 @@ namespace ET.Client
             self.View.ELabel_PlayerDownText.text = playerids[index];
             self.SetCardText(info.Players[index].OutCards, self.View.ELabel_DownOutText);
             self.SetCardText(info.Players[index].OpenDeal, self.View.E_DownOpenDealText);
+            self.OpenCards = info.Players[index].OpenDeal;
             if (info.Players[index].OpenDeal != null)
             {
-                self.SetCard(info.Players[index].HandCards.Where(item =>
-                                info.Players[index].OpenDeal.Any(open => !CardInfoHelper.Equals(open.Card, item)))
-                        .ToList());
+                List<CardInfo> RemoveOpenList = info.Players[index].HandCards.ToList();
+                foreach (CardInfo ca in info.Players[index].OpenDeal.Select(item => item.Card))
+                {
+                    RemoveOpenList.Remove(RemoveOpenList.First(item => CardInfoHelper.Equals(item, ca)));
+                }
+
+                Log.Info($"Remove out {RemoveOpenList.Count} this {RemoveOpenList.ToJson()}");
+                self.SetCard(RemoveOpenList);
             }
             else
             {
@@ -258,7 +265,6 @@ namespace ET.Client
 
         public static void SendChi(this DlgGameRoom self)
         {
-            //self.SeflInfo;
             RoundInfo round = self.SeflInfo.Rounds.Last();
             CardInfo lastCard = round.OutCard.First();
             List<CardInfo> Chilist = self.Cards.Where(item =>
@@ -281,16 +287,26 @@ namespace ET.Client
             CardInfo lastCard = round.OutCard?.FirstOrDefault();
 
             List<CardInfo> gang = self.Cards.Where(item => CardInfoHelper.Equals(item, lastCard)).ToList();
-            if (gang.Count == 4)
+            if (gang.Count == 3)
             {
                 GameRoomHelper.GamerOperate(self.ClientScene(), OperateType.MahjongGang, gang);
                 return;
             }
 
-            gang = (from map in (from cards in self.Cards
-                    select new { card = cards, count = self.Cards.Count(item => CardInfoHelper.Equals(item, cards)) })
+            var joinList = self.OpenCards?.Where(item => item.OpenType == OpenDealType.Peng).Select(item => item.Card).ToList();
+
+            gang = (from map in (from cards in self.Cards.Concat(joinList ?? new List<CardInfo>())
+                    select new
+                    {
+                        card = cards,
+                        count = self.Cards.Concat(joinList ?? new List<CardInfo>())
+                                .Count(item => CardInfoHelper.Equals(item, cards))
+                    })
                 where map.count == 4
                 select map.card).ToList();
+
+            Log.Info($"Gang count:{gang.Count}");
+
             if (gang.Count > 4)
             {
                 self.View.E_SelectCardsImage.SetVisible(true);
@@ -302,6 +318,12 @@ namespace ET.Client
                     self.GetSelectPlanIndex(i).SetVisible(true);
                 }
 
+                return;
+            }
+
+            if (gang.Count < 4)
+            {
+                Log.Error($"找不到要杠的数组。 {gang.Count} {self.Cards.Concat(joinList ?? new List<CardInfo>()).ToJson()},Join : {joinList.ToJson()} , map:{self.OpenCards.ToJson()}");
                 return;
             }
 
@@ -337,7 +359,10 @@ namespace ET.Client
             {
                 case SelectCardType.MahjongGang:
                     selCards = self.ItemCards.Select(a => a.Value).Where(a => CardInfoHelper.Equals(a.Card, card.Card)).ToList();
-                    selInfo = self.Cards.Where(item => CardInfoHelper.Equals(item, card.Card)).ToList();
+                    selInfo = self.Cards
+                            .Concat(self.OpenCards?.Where(item => item.OpenType == OpenDealType.Peng).Select(item => item.Card) ??
+                                new List<CardInfo>()).Where(item => CardInfoHelper.Equals(item, card.Card))
+                            .ToList();
                     break;
                 case SelectCardType.MahjongChiLeft:
                     selInfo = self.Cards.Where(item =>
@@ -370,7 +395,10 @@ namespace ET.Client
 
             foreach (Scroll_Item_Card item in selCards)
             {
-                item.EButton_CardImage.color = Color.red;
+                if (item.uiTransform != null)
+                {
+                    item.EButton_CardImage.color = Color.red;
+                }
             }
         }
 

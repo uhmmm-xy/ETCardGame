@@ -14,7 +14,7 @@ namespace ET
 
             GameRoom room = entity.DomainScene().GetComponent<GameRoomComponent>().GetRoom(gamer.RoomId);
 
-            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameMessageDoing, gamer.PlayerId) )
+            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameMessageDoing, gamer.RoomId) )
             {
                 gamer.Ready();
             

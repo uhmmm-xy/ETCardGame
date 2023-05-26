@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ET
 {
+    [FriendOf(typeof (Card))]
     public static class CardHelper
     {
         public static List<CardInfo> CardToCardInfo(List<Card> cards)
@@ -14,17 +16,25 @@ namespace ET
 
             return infos;
         }
-        
-        public static List<Card> CardInfoToCard(List<CardInfo> cards)
+
+        public static List<Card> CardInfoToCard(List<CardInfo> cards, GameRoom room)
         {
             List<Card> infos = new();
             if (cards is null)
             {
                 return infos;
             }
-            foreach (CardInfo card in cards)
+
+            var cardInfoAndCount = (from t in cards.Distinct()
+                select new { item = t, count = cards.Count(i => i.Type == t.Type && i.Value == t.Value) }).ToList();
+
+            foreach (var item in cardInfoAndCount)
             {
-                infos.Add(card.ToEnity());
+                for (int i = 0; i < item.count; i++)
+                {
+                    infos.Add(room.GetComponent<CardComponent>().GetCard().Where(x => item.item.Value == x.CardValue && item.item.Type == x.CardType)
+                            .ToList()[i]);
+                }
             }
 
             return infos;
@@ -32,12 +42,13 @@ namespace ET
 
         public static List<OpenDealMap> ToOpenDealMap(Dictionary<Card, int> maps)
         {
-            List<OpenDealMap> ret = new ();
-            foreach ((Card card,int type) in maps)
+            List<OpenDealMap> ret = new();
+            foreach ((Card card, int type) in maps)
             {
                 OpenDealMap map = new OpenDealMap() { Card = card.ToInfo(), OpenType = type };
                 ret.Add(map);
             }
+
             return ret;
         }
     }

@@ -54,6 +54,7 @@ namespace ET.Server
                 case SceneType.Game:
                     scene.AddComponent<GameRoomComponent>();
                     scene.AddComponent<GamerComponent>();
+                    scene.AddComponent<GameLogicComponent>();
                     break;
                 case SceneType.Account:
                     scene.AddComponent<AccountSessionComponent>();

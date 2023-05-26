@@ -14,7 +14,7 @@ namespace ET
 
         public int Operate;
 
-        //public List<Card> OperateCards;//可以操作的牌
+        public List<Card> WinCards = new ();//可以操作的牌
 
         //public List<int> Operates; //可以操作的集合
 

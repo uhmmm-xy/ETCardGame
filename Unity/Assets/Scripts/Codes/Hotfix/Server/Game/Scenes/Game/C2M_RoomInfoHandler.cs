@@ -16,7 +16,7 @@ namespace ET
                 return;
             }
 
-            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameMessageDoing, gamer.PlayerId))
+            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameMessageDoing, gamer.RoomId))
             {
                 Scene game = unit.DomainScene();
                 GameRoom gameRoom = game.GetComponent<GameRoomComponent>().GetRoom(request.RoomId);

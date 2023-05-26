@@ -29,6 +29,7 @@ namespace ET
             info.Score = self.Score;
             info.OpenDeal = CardHelper.ToOpenDealMap(self.OpenDeal);
             info.OutCards = CardHelper.CardToCardInfo(self.OutCards);
+            info.WinCards = CardHelper.CardToCardInfo(self.WinCards);
             info.HandCards = new List<CardInfo>();
             if (my)
             {

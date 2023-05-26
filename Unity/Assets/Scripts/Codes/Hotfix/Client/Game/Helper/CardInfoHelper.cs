@@ -8,11 +8,8 @@
                 return false;
             if (y == null)
                 return false;
-            if (x.Value.Equals(y.Value) && x.Type.Equals(y.Type))
-            {
-                return true;
-            }
-            return false;
+            
+            return x.Value == y.Value && x.Type == y.Type;
         }
     }
 }

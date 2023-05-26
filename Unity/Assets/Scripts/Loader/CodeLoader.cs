@@ -20,6 +20,7 @@ namespace ET
 			"Unity.Core.dll",
 			"Unity.ThirdParty.dll",
 			"MongoDB.Bson.dll",
+			"Share..Algorithm.dll",
 		};
 
 

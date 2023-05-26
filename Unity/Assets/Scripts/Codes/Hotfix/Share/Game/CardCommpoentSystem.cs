@@ -53,5 +53,53 @@ namespace ET
         {
             return self.Cards;
         }
+
+        public static Card GetCard(this CardComponent self, MahjongAlgorithm.Algorithm.Card card)
+        {
+            int type = 0;
+            int value = 0;
+            if (card < MahjongAlgorithm.Algorithm.Card.East)
+            {
+                type = ((int)card / 10) + 1;
+                value = ((int)card % 10) - 1;
+            }
+            else
+            {
+                switch (card)
+                {
+                    case MahjongAlgorithm.Algorithm.Card.East:
+                        type = 5;
+                        value = 0;
+                        break;
+                    case MahjongAlgorithm.Algorithm.Card.North:
+                        type = 5;
+                        value = 1;
+                        break;
+                    case MahjongAlgorithm.Algorithm.Card.South:
+                        type = 5;
+                        value = 2;
+                        break;
+                    case MahjongAlgorithm.Algorithm.Card.West:
+                        type = 5;
+                        value = 3;
+                        break;
+                    case MahjongAlgorithm.Algorithm.Card.Red:
+                        type = 4;
+                        value = 0;
+                        break;
+                    case MahjongAlgorithm.Algorithm.Card.Green:
+                        type = 4;
+                        value = 1;
+                        break;
+                    case MahjongAlgorithm.Algorithm.Card.White:
+                        type = 4;
+                        value = 2;
+                        break;
+                }
+            }
+
+            Card ret = self.Cards.First(item => item.CardType == type && item.CardValue == value);
+            return ret;
+        }
     }
 }

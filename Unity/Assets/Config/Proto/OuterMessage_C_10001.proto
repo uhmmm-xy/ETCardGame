@@ -358,6 +358,7 @@ message GamerInfo
 	int32 Status = 7;
 	repeated CardInfo HandCards = 8;
 	int32 Operate = 9;
+	repeated CardInfo WinCards = 10;
 }
 
 message RoundInfo

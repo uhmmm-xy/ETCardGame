@@ -12,7 +12,7 @@ namespace ET
             GameRoomComponent gameRoomComponent = scene.GetComponent<GameRoomComponent>();
             GamerComponent gamerComponent = scene.GetComponent<GamerComponent>();
 
-            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameCreateRoom, request.PlayerId))
+            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameCreateRoom, scene.InstanceId))
             {
                 GameRoom gameRoom = await gameRoomComponent.CreateRoom(request.GameId);
 

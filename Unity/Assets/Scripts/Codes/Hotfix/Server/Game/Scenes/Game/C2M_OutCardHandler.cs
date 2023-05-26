@@ -15,7 +15,7 @@ namespace ET
                 return;
             }
 
-            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameMessageDoing, gamer.PlayerId))
+            using (await CoroutineLockComponent.Instance.Wait(CoroutineLockType.GameMessageDoing, gamer.RoomId))
             {
                 Card card = gamer.OutCard(request.Card.ToEnity());
                 if (card is null)

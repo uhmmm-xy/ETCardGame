@@ -12,6 +12,8 @@ namespace ET
         [ProtoIgnore]
         [BsonIgnore]
         private Dictionary<int, GameConfig> dict = new Dictionary<int, GameConfig>();
+        
+        private Dictionary<string, GameConfig> GamebyName = new Dictionary<string, GameConfig>();
 		
         [BsonElement]
         [ProtoMember(1)]
@@ -65,6 +67,19 @@ namespace ET
                 return null;
             }
             return this.dict.Values.GetEnumerator().Current;
+        }
+        
+        public GameConfig GetByName(string name)
+        {
+	        return this.GamebyName[name];
+        }
+
+        public override void AfterEndInit()
+        {
+	        foreach (GameConfig config in this.GetAll().Values)
+	        {
+		        this.GamebyName.Add(config.Name, config);
+	        }
         }
     }
 

@@ -9,6 +9,7 @@ namespace ET.Client
         // 注册router
         public static async ETTask<Session> CreateRouterSession(Scene clientScene, IPEndPoint address)
         {
+            clientScene.GetComponent<RouterAddressComponent>().GetRealmAddress("");
             (uint recvLocalConn, IPEndPoint routerAddress) = await GetRouterAddress(clientScene, address, 0, 0);
 
             if (recvLocalConn == 0)

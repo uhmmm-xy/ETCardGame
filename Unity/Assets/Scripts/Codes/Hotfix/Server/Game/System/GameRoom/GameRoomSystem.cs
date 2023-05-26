@@ -49,7 +49,9 @@ namespace ET
                 Log.Info("Game Begin");
                 self.RoomStatus = RoomStatus.Gameing;
 
-                int startIndex = RandomGenerator.RandomNumber(GameRoom.MinIndex, self.Players.Count);
+                // int startIndex = RandomGenerator.RandomNumber(GameRoom.MinIndex, self.Players.Count);
+                int startIndex = self.Players.IndexOf(4);
+                --startIndex;
                 RoundComponent roundComponent = self.GetComponent<RoundComponent>();
                 Round round = roundComponent.CreateRound(self.GetComponent<CardComponent>().ShuffleCard(), self.Players, startIndex, self.GameType);
 
