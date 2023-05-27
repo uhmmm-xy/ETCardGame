@@ -295,42 +295,6 @@ namespace ET
             return map[(self.CardType * 10 + self.CardValue + 1)];
         }
 
-        private static List<Card> GetHuCard(this HangZhouMahjong self, List<Card> checks, int jockerCount)
-        {
-            Card tem = null;
-            for (int i = 0; i < (checks.Count + jockerCount + 1) / 3; i++)
-            {
-                foreach (Card card in checks)
-                {
-                    if (tem is null)
-                    {
-                        tem = card;
-                        continue;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        private static List<Card> RemoveJiang(this List<Card> self, Card jiang)
-        {
-            List<Card> ret = self.ToList();
-            int del = 0;
-            foreach (Card item in self.Where(item => item.CardValue == jiang.CardValue && item.CardType == jiang.CardType))
-            {
-                if (del >= 2)
-                {
-                    break;
-                }
-
-                ret.Remove(item);
-                del++;
-            }
-
-            return ret;
-        }
-
         public static void Operate(this HangZhouMahjong self, Gamer gamer, int operate, List<Card> operateCards)
         {
             switch (operate)
